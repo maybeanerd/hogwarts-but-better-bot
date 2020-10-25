@@ -1,6 +1,6 @@
-import { commandCategories } from '../types/enums';
+import { accessLevel } from '../types/enums';
 
-export const ping: magibotCommand = {
+export const ping: botCommand = {
   name: 'ping',
   dev: false,
   hide: false,
@@ -17,5 +17,5 @@ export const ping: magibotCommand = {
   },
   perm: 'SEND_MESSAGES',
   admin: false,
-  category: commandCategories.misc,
+  minAccessLevel: accessLevel.default,
 };

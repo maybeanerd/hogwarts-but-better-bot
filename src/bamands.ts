@@ -21,16 +21,12 @@ export async function findMember(
     return user.id;
   }
   if (mention.length >= 3) {
-    let memberArray = guild.members.cache.filter(
-      (memb) => memb.displayName.toLowerCase().startsWith(mention),
-    );
+    let memberArray = guild.members.cache.filter((memb) => memb.displayName.toLowerCase().startsWith(mention));
     if (memberArray.size === 1) {
       return memberArray.first()!.id;
     }
     if (memberArray.size === 0) {
-      memberArray = guild.members.cache.filter(
-        (memb) => memb.displayName.toLowerCase().includes(mention),
-      );
+      memberArray = guild.members.cache.filter((memb) => memb.displayName.toLowerCase().includes(mention));
       if (memberArray.size === 1) {
         return memberArray.first()!.id;
       }
@@ -116,7 +112,7 @@ export function printError(error) {
 
 export async function asyncForEach<T, F, O>(
   array: Array<T>,
-  callback: (input: T, index: number, optionalParams?: O) => Promise<F>,
+  callback: (input: T, index: number, optionalParameters?: O) => Promise<F>,
   optionalParams?: O,
 ) {
   const arr = array.map((e, i) => callback(e, i, optionalParams));

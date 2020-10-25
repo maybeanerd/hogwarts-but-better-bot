@@ -1,6 +1,7 @@
 import { ClientUser } from 'discord.js';
+import { hogwartsHouse } from './types/enums';
 
-export const PREFIX = 'something';
+export const PREFIX = 'hbbb';
 export const { TOKEN } = process.env;
 export const DETAILED_LOGGING = false;
 export const DELETE_COMMANDS = false;
@@ -17,3 +18,10 @@ export function setUser(usr: ClientUser) {
 export function user() {
   return bot_user;
 }
+
+export const hogwartsHouses = new Map([
+  [hogwartsHouse.Slytherin, '767863150665924608'],
+  [hogwartsHouse.Gryffindor, '767863063285858304'],
+  [hogwartsHouse.Hufflepuff, '767863200427278336'],
+  [hogwartsHouse.Ravenclaw, '767863344128065576'],
+]);

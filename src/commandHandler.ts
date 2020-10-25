@@ -1,58 +1,24 @@
 import Discord, { Message } from 'discord.js';
-// eslint-disable-next-line import/no-cycle
-import { statcord } from './bot';
-import { vote } from './commands/vote';
-import { sound } from './commands/sound';
-import { rfact } from './commands/rfact';
-// eslint-disable-next-line import/no-cycle
-import { stats } from './commands/stats';
-import { salt } from './commands/salt';
-// eslint-disable-next-line import/no-cycle
-import { bug } from './commands/bug';
 import { inf as info } from './commands/info';
-import { inv as invite } from './commands/invite';
 import { ping } from './commands/ping';
-import { profile } from './commands/profile';
-import { roll } from './commands/roll';
-import { dc as _dc } from './commands/@dc';
-import { evall as _eval } from './commands/@eval';
-// eslint-disable-next-line import/no-cycle
-import { queue as _queue } from './commands/@queue';
-import { salt as _salt } from './commands/@salt';
-import { sound as _sound } from './commands/@sound';
-import { setup as _setup } from './commands/@setup';
-// eslint-disable-next-line import/no-cycle
-import { update as _update } from './commands/@update';
 // we allow this cycle once, as the help command also needs to list itself
 import { help } from './commands/help'; // eslint-disable-line import/no-cycle
 
-import {
-  DELETE_COMMANDS, user,
-} from './shared_assets';
+import { DELETE_COMMANDS, PREFIX, user } from './shared_assets';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
+import { accessLevel } from './types/enums';
+import { handle } from './nlCommandHandler';
 
 export const commands: { [k: string]: botCommand } = {
-  _dc,
-  _eval,
-  _queue,
-  _sound,
-  _setup,
-  _update,
-  _salt,
   help,
-  salt,
-  stats,
-  rfact,
-  sound,
-  vote,
-  bug,
   info,
-  invite,
   ping,
-  profile,
-  roll,
 };
+
+function isAdmin(usr: Discord.GuildMember | null) {
+  return !(usr /*  && (await data.isAdmin(msg.guild.id, msg.member)) */);
+}
 
 async function catchError(error: Error, msg: Discord.Message, command: string) {
   console.error(
@@ -63,11 +29,7 @@ async function catchError(error: Error, msg: Discord.Message, command: string) {
   );
 
   msg.reply(`something went wrong while using ${command}. The devs have been automatically notified.
-If you can reproduce this, consider using \`${
-  PREFIXES[msg.guild ? msg.guild.id : 0]
-}.bug <bugreport>\` or join the support discord (link via \`${
-  PREFIXES[msg.guild ? msg.guild.id : 0]
-}.info\`) to tell us exactly how.`);
+If you can reproduce this, consider using \`${PREFIX}.bug <bugreport>\` or join the support discord (link via \`${PREFIX}.info\`) to tell us exactly how.`);
 }
 
 const userCooldowns = new Set<string>();
@@ -88,17 +50,14 @@ export async function checkCommand(msg: Discord.Message) {
     || msg.content.startsWith(`<@!${user().id}>`)
   ) {
     isMention = true;
-  } else if (msg.content.startsWith(PREFIXES[msg.guild.id])) {
+  } else if (msg.content.startsWith(PREFIX)) {
     isMention = false;
   } else {
+    // here we can have "natural language" commands
+    if (isAdmin(msg.member)) await handle(msg);
     return;
   }
-  // ignore blacklisted users
-  if (await data.isBlacklistedUser(msg.author.id, msg.guild.id)) {
-    // we dont delete the message because this would delete everything that starts with the prefix
-    /*     msg.delete(); */
-    return;
-  }
+
   let command: string;
   let content: string;
   if (isMention) {
@@ -110,11 +69,11 @@ export async function checkCommand(msg: Discord.Message) {
     command = `.${command}`;
   } else {
     command = msg.content
-      .substring(PREFIXES[msg.guild.id].length, msg.content.length)
+      .substring(PREFIX.length, msg.content.length)
       .split(' ')[0]
       .toLowerCase();
     // delete prefix and command
-    content = msg.content.slice(command.length + PREFIXES[msg.guild.id].length);
+    content = msg.content.slice(command.length + PREFIX.length);
     content = content.replace(/^\s+/g, ''); // delete leading spaces
   }
   if (command) {
@@ -126,19 +85,12 @@ export async function checkCommand(msg: Discord.Message) {
     if (pre === '.') {
       command = command.slice(1);
       commandVal = command;
-    } else if (pre === ':') {
-      command = `_${command.slice(1)}`;
-      commandVal = command.slice(1);
-      // Check if its an admin command
-      // if not you're allowed to use the normal version as admin (in any channel)
-      if (!commands[command]) {
-        command = command.slice(1);
-      }
-      // Check if the command exists, to not just spam k: msgs
-      if (!commands[command]) {
-        return;
-      }
-      if (!(msg.member && (await data.isAdmin(msg.guild.id, msg.member)))) {
+    } else {
+      return;
+    }
+    const cmd = commands[command];
+    if (cmd && cmd.minAccessLevel === accessLevel.admin) {
+      if (isAdmin(msg.member)) {
         if (myPerms) {
           if (myPerms.has('MANAGE_MESSAGES')) {
             msg.delete();
@@ -151,17 +103,11 @@ export async function checkCommand(msg: Discord.Message) {
         }
         return;
       }
-    } else {
-      return;
     }
-
-    if (
-      commands[command]
-      && (!commands[command].dev || msg.author.id === OWNERID)
-    ) {
+    if (cmd) {
       if (
-        pre === ':'
-        || (await data.commandAllowed(msg.guild.id, msg.channel.id))
+        cmd // just check if user is allowed to use commands here
+        /* || (await data.commandAllowed(msg.guild.id, msg.channel.id)) */
       ) {
         const perms = commands[command].perm;
         if (!perms || (myPerms && myPerms.has(perms))) {
@@ -172,16 +118,10 @@ export async function checkCommand(msg: Discord.Message) {
               userCooldowns.delete(msg.author.id);
             }, 4000);
             try {
-              statcord.postCommand(command, msg.author.id);
               await commands[command].main(content, msg);
             } catch (err) {
-              catchError(
-                err,
-                msg,
-                `${PREFIXES[msg.guild.id]}${pre}${commandVal}`,
-              );
+              catchError(err, msg, `${PREFIX}${pre}${commandVal}`);
             }
-            data.usageUp(msg.author.id, msg.guild.id);
           } else if (myPerms && myPerms.has('SEND_MESSAGES')) {
             msg.reply("whoa cool down, you're using commands too quick!");
           }
@@ -197,13 +137,11 @@ export async function checkCommand(msg: Discord.Message) {
         }
         msg
           .reply(
-            `commands aren't allowed in <#${
-              msg.channel.id
-            }>. Use them in ${await data.commandChannel(
+            `commands aren't allowed in <#${msg.channel.id}>. Use them in ${
+              /* await data.commandChannel(
               msg.guild.id,
-            )}. If you're an admin use \`${
-              PREFIXES[msg.guild.id]
-            }:help\` to see how you can change that.`,
+            ) */ ''
+            }. If you're an admin use \`${PREFIX}:help\` to see how you can change that.`,
           )
           .then((mess) => (mess as Message).delete({ timeout: 15000 }));
       }

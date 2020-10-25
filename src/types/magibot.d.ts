@@ -1,17 +1,17 @@
 import Discord, { Message } from 'discord.js';
-import { commandCategories } from './enums';
+import { accessLevel } from './enums';
 
 declare global {
   type botCommand = {
-    name:string;
-    ehelp: (msg:Message)=>Array<{name:string, value:string}>;
+    name: string;
+    ehelp: (msg: Message) => Array<{ name: string; value: string }>;
     admin: boolean;
-    hide:boolean;
-    dev:boolean;
+    hide: boolean;
+    dev: boolean;
     perm: Discord.PermissionResolvable | Discord.PermissionResolvable[];
-    category: commandCategories;
+    minAccessLevel: accessLevel;
     main:
-      | ((content:string, msg: Discord.Message) => Promise<any>)
-      | ((content:string, msg: Discord.Message) => any);
+      | ((content: string, msg: Discord.Message) => Promise<any>)
+      | ((content: string, msg: Discord.Message) => any);
   };
 }

@@ -1,44 +1,30 @@
 ﻿import Discord, { DiscordAPIError } from 'discord.js';
-import Statcord from 'statcord.js';
-import { handle } from 'blapi';
-import config from './token';
-import data from './db';
-import {
-  PREFIX,
-  PREFIXES,
-  TOKEN,
-  queueVoiceChannels,
-  setUser,
-} from './shared_assets';
+import Umzug from 'umzug';
+import { Sequelize } from 'sequelize';
+import { sequelize } from './database/allModels';
+import { PREFIX, TOKEN, setUser } from './shared_assets';
 // eslint-disable-next-line import/no-cycle
 import { checkCommand } from './commandHandler';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
-import {
-  sendJoinSoundsPlayed,
-  sendUsersWhoJoinedQueue,
-  playedJoinsound,
-} from './statTracking';
+
+const umzug = new Umzug({
+  storage: 'sequelize',
+  storageOptions: {
+    sequelize, // here should be a sequelize instance, not the Sequelize module
+  },
+  migrations: {
+    params: [
+      sequelize.getQueryInterface(),
+      Sequelize, // Sequelize constructor - the required module
+    ],
+    path: './migrations',
+    pattern: /\.js$/,
+  },
+});
 
 export const bot = new Discord.Client();
 
-if (!process.env.STATCORD_TOKEN) {
-  throw new Error('Statcord token missing!');
-}
-
-export const statcord = new Statcord.Client({
-  client: bot,
-  key: process.env.STATCORD_TOKEN,
-});
-
-// register custom stats
-statcord.registerCustomFieldHandler(1, sendJoinSoundsPlayed);
-statcord.registerCustomFieldHandler(2, sendUsersWhoJoinedQueue);
-
-// post to the APIs every 30 minutes
-if (config.blapis) {
-  handle(bot, config.blapis, 30);
-}
 process.on('uncaughtException', async (err) => {
   console.error(`Uncaught Exception:\n${err.stack ? err.stack : err}`);
   await catchErrorOnDiscord(
@@ -52,9 +38,9 @@ process.on('unhandledRejection', async (
   if (err) {
     if (err instanceof DiscordAPIError) {
       await catchErrorOnDiscord(
-        `**DiscordAPIError (${err.method || 'NONE'}):**\n\`\`\`${
+        `**DiscordAPIError (${err.message || 'NONE'}):**\n\`\`\`${
           err.message
-        }\`\`\`\`\`\`${err.path ? err.path.substring(0, 1200) : ''}\`\`\``,
+        }\`\`\`\`\`\`${err.stack ? err.stack.substring(0, 1200) : ''}\`\`\``,
       );
     } else {
       await catchErrorOnDiscord(
@@ -69,6 +55,39 @@ process.on('unhandledRejection', async (
 // fires on startup and on reconnect
 let justStartedUp = true;
 bot.on('ready', async () => {
+  try {
+    console.info('[UMZUG] Applying pending migrations.');
+    const migrations = await umzug.up();
+    if (migrations.length > 0) {
+      console.info('[UMZUG] Applied migrations:');
+      /* eslint-disable no-restricted-syntax */
+      for (const m of migrations) {
+        console.info(` -  ${m.file}`);
+      }
+      /* eslint-enable no-restricted-syntax */
+    } else {
+      console.info('[UMZUG] Database is up to date.');
+    }
+  } catch (e) {
+    console.error('[UMZUG] Failed migrating database:');
+    console.error(e);
+    process.exit();
+  }
+
+  const syncSequelizeModels = true;
+  if (syncSequelizeModels && process.env.NODE_ENV === 'development') {
+    console.info(
+      '[SEQUELIZE] Starting to sync defined tables to DB because we are in dev mode.',
+    );
+    const wipeDB = false; // set to true if you changed the DB and are in dev mode
+    // sync force apparently also wipes the SequelizeMeta table,
+    // which then errors on re-trying migrations
+    await sequelize.sync({
+      force: wipeDB && process.env.NODE_ENV === 'development',
+    });
+    console.info('[SEQUELIZE] Finished syncing defined tables to DB.');
+  }
+
   if (!bot.user) {
     throw new Error('FATAL Bot has no user.');
   }
@@ -212,8 +231,9 @@ bot.on('voiceStateUpdate', async (o, n) => {
                 connection.disconnect();
               } catch (err) {
                 catchErrorOnDiscord(
-                  `**Error in timeout (${(err.toString && err.toString())
-                    || 'NONE'}):**\n\`\`\`
+                  `**Error in timeout (${
+                    (err.toString && err.toString()) || 'NONE'
+                  }):**\n\`\`\`
                 ${err.stack || 'NO STACK'}
                 \`\`\``,
                 );
@@ -226,8 +246,9 @@ bot.on('voiceStateUpdate', async (o, n) => {
                 connection.disconnect();
               } catch (err) {
                 catchErrorOnDiscord(
-                  `**Error in once finish (${(err.toString && err.toString())
-                    || 'NONE'}):**\n\`\`\`
+                  `**Error in once finish (${
+                    (err.toString && err.toString()) || 'NONE'
+                  }):**\n\`\`\`
                 ${err.stack || 'NO STACK'}
                 \`\`\``,
                 );
@@ -238,8 +259,9 @@ bot.on('voiceStateUpdate', async (o, n) => {
               clearTimeout(timeoutID);
               dispatcher.removeAllListeners(); // To be sure noone listens to this anymore
               catchErrorOnDiscord(
-                `**Dispatcher Error (${(err.toString && err.toString())
-                  || 'NONE'}):**\n\`\`\`
+                `**Dispatcher Error (${
+                  (err.toString && err.toString()) || 'NONE'
+                }):**\n\`\`\`
                 ${err.stack || 'NO STACK'}
                 \`\`\``,
               ).then(() => connection.disconnect());

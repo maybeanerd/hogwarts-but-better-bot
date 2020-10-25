@@ -6,14 +6,14 @@ const maxMessageLength = 1950;
 
 export async function catchErrorOnDiscord(message: string) {
   try {
-    const chann = bot.channels.get('414809410448261132');
+    const chann = bot.channels.fetch('414809410448261132');
     if (chann) {
       let idx = 0;
       for (let i = 0; i < message.length; i += maxMessageLength) {
         idx++;
         // I want this to never hit ratelimit, so let's take it slow
         // eslint-disable-next-line no-await-in-loop
-        await (chann as Discord.TextChannel).send(
+        await ((chann as any) as Discord.TextChannel).send(
           `${idx}: ${message.substring(i, i + maxMessageLength)}`,
         );
       }

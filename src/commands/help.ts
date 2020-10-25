@@ -1,20 +1,20 @@
 import { MessageEmbedOptions } from 'discord.js';
-import { PREFIXES, COLOR, user } from '../shared_assets';
-import { commandCategories } from '../types/enums';
+import { COLOR, user } from '../shared_assets';
+import { accessLevel } from '../types/enums';
 // we allow this cycle once, as the help command also needs to list itself
 import { commands } from '../commandHandler'; // eslint-disable-line import/no-cycle
-import data from '../db';
 
-export const help: magibotCommand = {
+export const help: botCommand = {
   name: 'help',
-  category: commandCategories.misc,
+  minAccessLevel: accessLevel.default,
   admin: false,
   perm: 'SEND_MESSAGES',
   main: async function main(content, msg) {
     if (!msg.guild) {
-      return;
+      return null;
     }
-    const args = content.split(/ +/);
+    return true;
+    /*  const args = content.split(/ +/);
     let command = args[0].toLowerCase();
     // extended help
     if (command) {
@@ -206,7 +206,7 @@ export const help: magibotCommand = {
         };
         msg.channel.send('', { embed });
       }
-    }
+    } */
   },
   hide: false,
   dev: false,
