@@ -1,0 +1,61 @@
+{
+  "name": "Hausbot",
+  "version": "0.0.1",
+  "description": "Hogwarts but better bot",
+  "main": "dist/bot.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "dependencies": {
+    "axios": "^0.21.0",
+    "discord.js": "^12.4.1",
+    "dotenv": "^8.2.0",
+    "forever": "^3.0.2",
+    "libsodium-wrappers": "^0.7.8",
+    "zucc": "^0.1.2"
+  },
+  "optionalDependencies": {
+    "erlpack": "github:discordapp/erlpack",
+    "zlib-sync": "^0.1.7"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.2",
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@typescript-eslint/parser": "^4.5.0",
+    "eslint": "^7.12.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.14.0",
+    "eslint-config-standard": "^15.0.0",
+    "eslint-import-resolver-typescript": "^2.3.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-standard": "^4.0.2",
+    "prettier": "^2.1.2",
+    "typescript": "^4.0.3"
+  },
+  "scripts": {
+    "install-dev": "npm i --no-optional",
+    "dev": "tsc && node dist/bot.js",
+    "lint": "eslint .",
+    "build": "tsc",
+    "start": "node dist/bot.js",
+    "startforever": "forever start dist/bot.js",
+    "stopforever": "forever stop dist/bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/T0TProduction/MagiBot.git"
+  },
+  "author": "Sebastian Di Luzio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/T0TProduction/MagiBot/issues"
+  },
+  "homepage": "https://github.com/T0TProduction/MagiBot#readme",
+  "heroku-run-build-script": true,
+  "snyk": true
+}
