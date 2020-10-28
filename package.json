@@ -13,7 +13,7 @@
     "dotenv": "^8.2.0",
     "forever": "^3.0.2",
     "libsodium-wrappers": "^0.7.8",
-    "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
     "sequelize": "^6.3.5",
     "umzug": "^2.3.0",
     "zucc": "^0.1.2"
