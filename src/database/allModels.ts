@@ -1,8 +1,8 @@
 import Sequelize from 'sequelize';
 import transferredPointsModel from './transferredPoints';
 
-const dbUrl = process.env.DATABASE_URL;
-if (!dbUrl) {
+const dbPw = process.env.DATABASE_PW;
+if (!dbPw) {
   throw new Error('Missing DB URL');
 }
 
@@ -15,13 +15,14 @@ const sequelizeOptions = {
     freezeTableName: true, // do not add "s" to all table names
   },
   schema: 'public',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
+  host: 'localhost',
 };
-export const sequelize = new Sequelize.Sequelize(dbUrl, sequelizeOptions);
+
+export const sequelize = new Sequelize.Sequelize(
+  'h31nd5_hogwarts-but-better-bot',
+  'h31nd5',
+  dbPw,
+  sequelizeOptions,
+);
 
 export const transferredPoints = transferredPointsModel(sequelize, Sequelize);
