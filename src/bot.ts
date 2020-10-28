@@ -24,7 +24,7 @@ const umzug = new Umzug({
       sequelize.getQueryInterface(),
       Sequelize, // Sequelize constructor - the required module
     ],
-    path: './migrations',
+    path: './src/migrations',
     pattern: /\.js$/,
   },
 });
