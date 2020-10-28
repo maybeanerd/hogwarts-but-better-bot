@@ -35,7 +35,7 @@ export async function handle(msg: Message) {
   const mentionedUser = addition ? args[3] : args[4];
   console.log('mentioned user:', mentionedUser);
 
-  const mentionedUserId = findMember(msg.guild!, mentionedUser);
+  const mentionedUserId = await findMember(msg.guild!, mentionedUser);
   console.log('userID found:', mentionedUserId);
   if (!mentionedUserId) {
     return msg.reply('found no user of that name, bruh.');
