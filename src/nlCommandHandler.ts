@@ -32,11 +32,14 @@ export async function handle(msg: Message) {
   }
   console.log('still addition?:', addition);
 
-  const mentionedUser = addition ? args[4] : args[5];
+  const mentionedUser = addition ? args[3] : args[4];
   console.log('mentioned user:', mentionedUser);
 
   const mentionedUserId = findMember(msg.guild!, mentionedUser);
   console.log('userID found:', mentionedUserId);
+  if (!mentionedUserId) {
+    return msg.reply('found no user of that name, bruh.');
+  }
 
   // do something with our info
   transferredPoints.upsert({
