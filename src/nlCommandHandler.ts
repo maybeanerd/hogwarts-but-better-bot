@@ -37,7 +37,5 @@ export async function handle(msg: Message) {
     season: 1,
   });
 
-  msg.reply('done.');
-
-  return null;
+  return msg.reply('done.');
 }

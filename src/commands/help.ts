@@ -3,6 +3,7 @@ import { COLOR, user } from '../shared_assets';
 import { accessLevel } from '../types/enums';
 // we allow this cycle once, as the help command also needs to list itself
 import { commands } from '../commandHandler'; // eslint-disable-line import/no-cycle
+import { transferredPoints } from '../database/allModels';
 
 export const help: botCommand = {
   name: 'help',
@@ -13,6 +14,8 @@ export const help: botCommand = {
     if (!msg.guild) {
       return null;
     }
+    const ret = await transferredPoints.findAll();
+    msg.reply(JSON.stringify(ret.toString, null, 2));
     return true;
     /*  const args = content.split(/ +/);
     let command = args[0].toLowerCase();
