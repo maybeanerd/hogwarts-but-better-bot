@@ -1,4 +1,9 @@
-﻿import Discord, { DiscordAPIError } from 'discord.js';
+﻿import { config } from 'dotenv';
+
+config();
+
+/* eslint-disable import/first */
+import Discord, { DiscordAPIError } from 'discord.js';
 import Umzug from 'umzug';
 import { Sequelize } from 'sequelize';
 import { sequelize } from './database/allModels';
@@ -7,6 +12,7 @@ import { PREFIX, TOKEN, setUser } from './shared_assets';
 import { checkCommand } from './commandHandler';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
+/* eslint-enable import/first */
 
 const umzug = new Umzug({
   storage: 'sequelize',
