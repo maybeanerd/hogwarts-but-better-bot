@@ -10,14 +10,15 @@ export async function handle(msg: Message) {
   if (args.length < 4 || args[1].toLowerCase() !== 'punkte') {
     return null;
   }
-  const amount = args[0];
+  const amount = Number(args[0]);
   console.log('amount:', amount);
-  if (typeof amount !== 'number') {
-    return null;
+  if (!amount) {
+    return msg.reply('invalid amount.');
   }
   if (amount % 10 !== 0) {
-    msg.reply('Invalid number of points supplied.');
-    /* .then((mess) => (mess as Discord.Message).delete({ timeout: 5000 })); */
+    msg.reply(
+      'Invalid amount of points supplied, only multiples of 10 allowed.',
+    );
   }
   const addition: boolean = args[2].toLowerCase() === 'für';
   console.log('addition?:', addition);
@@ -26,7 +27,7 @@ export async function handle(msg: Message) {
     if (
       !(args[2].toLowerCase() === 'abzug' && args[3].toLowerCase() === 'für')
     ) {
-      return null;
+      return msg.reply('i cant tell what youre trying to do tbh.');
     }
   }
   console.log('still addition?:', addition);
