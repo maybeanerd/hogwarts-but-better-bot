@@ -15,7 +15,7 @@ export const help: botCommand = {
       return null;
     }
     const ret = await transferredPoints.findAll();
-    msg.reply(JSON.stringify(ret.toString, null, 2));
+    msg.reply(JSON.stringify(ret.toString, null, 2).slice(0, 1900));
     return true;
     /*  const args = content.split(/ +/);
     let command = args[0].toLowerCase();
