@@ -17,7 +17,7 @@ export const commands: { [k: string]: botCommand } = {
 };
 
 function isAdmin(usr: Discord.GuildMember | null) {
-  return !(usr /*  && (await data.isAdmin(msg.guild.id, msg.member)) */);
+  return (usr /*  && (await data.isAdmin(msg.guild.id, msg.member)) */);
 }
 
 async function catchError(error: Error, msg: Discord.Message, command: string) {

@@ -14,7 +14,6 @@ const sequelizeOptions = {
     timestamps: false,
     freezeTableName: true, // do not add "s" to all table names
   },
-  schema: 'public',
   host: 'localhost',
 };
 

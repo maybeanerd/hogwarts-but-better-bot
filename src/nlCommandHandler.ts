@@ -4,6 +4,7 @@ import { transferredPoints } from './database/allModels';
 import { hogwartsHouse } from './types/enums';
 
 export async function handle(msg: Message) {
+  console.log('got into natural language handler');
   const args = msg.content.split(' ');
   if (args.length < 4 || args[1].toLowerCase() !== 'punkte') {
     return null;
