@@ -3,6 +3,18 @@ import { findMember } from './bamands';
 import { transferredPoints } from './database/allModels';
 import { hogwartsHouse } from './types/enums';
 
+const getHouseOfUser: botCommand = {
+  name: 'getHouseOfUser',
+  dev: true,
+  hide: false,
+  main(bot, msg) {
+    const start = Date.now();
+    if (msg.member.roles.cache.find((r) => r.name === 'Ravenclaw')) {
+      console.info('The function was called and the User ID is $(user.id)'); // Wieso wird das hier nicht richtig ausgeklammer? Ich dachet TypeScript macht das
+    }
+  },
+};
+
 export async function handle(msg: Message) {
   console.log('got into natural language handler');
   const args = msg.content.split(' ');
@@ -47,7 +59,8 @@ export async function handle(msg: Message) {
     receiver_id: mentionedUserId,
     amount: addition ? amount : amount * -1,
     date: new Date(),
-    house: hogwartsHouse.Slytherin, // TODO
+    house: hogwartsHouse.Slytherin,
+    // house: getHogwartsHouse(mentionedUserId), // TODO
     season: 1,
   });
 
