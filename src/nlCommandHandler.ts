@@ -1,19 +1,19 @@
 import { Message } from 'discord.js';
 import { findMember } from './bamands';
 import { transferredPoints } from './database/allModels';
-import { hogwartsHouse } from './types/enums';
+import { hogwartsHouses } from './shared_assets';
 
-const getHouseOfUser: botCommand = {
-  name: 'getHouseOfUser',
-  dev: true,
-  hide: false,
-  main(bot, msg) {
-    const start = Date.now();
-    if (msg.member.roles.cache.find((r) => r.name === 'Ravenclaw')) {
-      console.info('The function was called and the User ID is $(user.id)'); // Wieso wird das hier nicht richtig ausgeklammer? Ich dachet TypeScript macht das
-    }
-  },
-};
+async function getHouseOfUser(memberID: string, msg: Message) {
+  const member = await msg.guild?.members.fetch(memberID);
+  if (!member) {
+    return null;
+  }
+  const role = member.roles.cache.find((r) => hogwartsHouses.has(r.id));
+  if (!role) {
+    return null;
+  }
+  return hogwartsHouses.get(role.id) || null;
+}
 
 export async function handle(msg: Message) {
   console.log('got into natural language handler');
@@ -53,14 +53,18 @@ export async function handle(msg: Message) {
     return msg.reply('found no user of that name, bruh.');
   }
 
+  const userHouse = await getHouseOfUser(mentionedUserId, msg);
+  if (!userHouse) {
+    return msg.reply('the user doesn\'t seem to have a house.');
+  }
+
   // do something with our info
   transferredPoints.upsert({
     giver_id: msg.member!.id,
     receiver_id: mentionedUserId,
     amount: addition ? amount : amount * -1,
     date: new Date(),
-    house: hogwartsHouse.Slytherin,
-    // house: getHogwartsHouse(mentionedUserId), // TODO
+    house: userHouse,
     season: 1,
   });
 
