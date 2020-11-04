@@ -20,8 +20,8 @@ export function user() {
 }
 
 export const hogwartsHouses = new Map([
-  [hogwartsHouse.Slytherin, '767863150665924608'],
-  [hogwartsHouse.Gryffindor, '767863063285858304'],
-  [hogwartsHouse.Hufflepuff, '767863200427278336'],
-  [hogwartsHouse.Ravenclaw, '767863344128065576'],
+  ['767863150665924608', hogwartsHouse.Slytherin],
+  ['767863063285858304', hogwartsHouse.Gryffindor],
+  ['767863200427278336', hogwartsHouse.Hufflepuff],
+  ['767863344128065576', hogwartsHouse.Ravenclaw],
 ]);
