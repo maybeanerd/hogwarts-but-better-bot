@@ -49,7 +49,7 @@ export async function handle(msg: Message) {
   }
 
   // do something with our info
-  transferredPoints!.upsert({
+  transferredPoints.upsert({
     giver_id: msg.member!.id,
     receiver_id: user!.id,
     amount: addition ? amount : amount * -1,
