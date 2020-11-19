@@ -16,20 +16,21 @@ export async function findMember(
     }
     return id;
   }
+  // this only works if its not a username, but the ID (NOT a mention)
   const user = guild.member(mention);
   if (user) {
     return user.id;
   }
+
   if (mention.length >= 3) {
-    let memberArray = guild.members.cache.filter((memb) => memb.displayName.toLowerCase().startsWith(mention));
-    if (memberArray.size === 1) {
-      return memberArray.first()!.id;
-    }
-    if (memberArray.size === 0) {
-      memberArray = guild.members.cache.filter((memb) => memb.displayName.toLowerCase().includes(mention));
-      if (memberArray.size === 1) {
-        return memberArray.first()!.id;
-      }
+    // behavior of this query has not been tested!
+    // if it finds too many, maybe we want to filter before checking for length
+    const potentialMembers = await guild.members.fetch({
+      query: mention,
+      limit: 2, // for performance reasons, as two is already too many
+    });
+    if (potentialMembers.size === 1) {
+      return potentialMembers.first()!.id;
     }
   }
   return null;
@@ -48,6 +49,7 @@ export async function findRole(guild: Discord.Guild, ment: string) {
   if (role) {
     return role.id;
   }
+  // todo maybe adjust this funcion just as member search was changed (fetch query)
   if (mention.length >= 3) {
     let roleArray = guild.roles.cache.filter((rol) => rol.name.toLowerCase().startsWith(mention));
     if (roleArray.size === 1) {
