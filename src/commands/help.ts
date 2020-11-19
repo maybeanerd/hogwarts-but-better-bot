@@ -1,5 +1,5 @@
 import { MessageEmbedOptions } from 'discord.js';
-import { COLOR, productionMode, user } from '../shared_assets';
+import { COLOR, user } from '../shared_assets';
 import { accessLevel } from '../types/enums';
 // we allow this cycle once, as the help command also needs to list itself
 import { commands } from '../commandHandler'; // eslint-disable-line import/no-cycle
@@ -14,9 +14,7 @@ export const help: botCommand = {
     if (!msg.guild) {
       return null;
     }
-    const ret = productionMode
-      ? await transferredPoints!.findAll()
-      : 'running dev mode without database...';
+    const ret = await transferredPoints!.findAll();
     msg.reply(JSON.stringify(ret, null, 2).slice(0, 1900));
     return true;
     /*  const args = content.split(/ +/);

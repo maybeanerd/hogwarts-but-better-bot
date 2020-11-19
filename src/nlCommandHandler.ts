@@ -1,7 +1,7 @@
 import Discord, { Message } from 'discord.js';
 import { findMember } from './bamands';
 import { transferredPoints } from './database/allModels';
-import { hogwartsHouses, productionMode } from './shared_assets';
+import { hogwartsHouses } from './shared_assets';
 
 async function getHouseOfUser(member: Discord.GuildMember) {
   if (!member) {
@@ -49,15 +49,14 @@ export async function handle(msg: Message) {
   }
 
   // do something with our info
-  if (productionMode) {
-    transferredPoints!.upsert({
-      giver_id: msg.member!.id,
-      receiver_id: user!.id,
-      amount: addition ? amount : amount * -1,
-      date: new Date(),
-      house: userHouse,
-      season: 1,
-    });
-  }
+  transferredPoints!.upsert({
+    giver_id: msg.member!.id,
+    receiver_id: user!.id,
+    amount: addition ? amount : amount * -1,
+    date: new Date(),
+    house: userHouse,
+    season: 1,
+  });
+
   return msg.reply('done.');
 }
