@@ -29,4 +29,4 @@ export const sequelize = new Sequelize.Sequelize(
   sequelizeOptions,
 );
 
-export const transferredPoints = transferredPointsModel(sequelize!, Sequelize);
+export const transferredPoints = transferredPointsModel(sequelize, Sequelize);
