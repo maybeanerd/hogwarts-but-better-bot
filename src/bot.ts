@@ -7,7 +7,9 @@ import Discord, { DiscordAPIError } from 'discord.js';
 import Umzug from 'umzug';
 import { Sequelize } from 'sequelize';
 import { sequelize } from './database/allModels';
-import { PREFIX, TOKEN, setUser } from './shared_assets';
+import {
+  PREFIX, TOKEN, setUser, productionMode,
+} from './shared_assets';
 // eslint-disable-next-line import/no-cycle
 import { checkCommand } from './commandHandler';
 // eslint-disable-next-line import/no-cycle
@@ -81,7 +83,7 @@ bot.on('ready', async () => {
   }
 
   const syncSequelizeModels = true;
-  if (syncSequelizeModels && process.env.NODE_ENV === 'development') {
+  if (syncSequelizeModels) {
     console.info(
       '[SEQUELIZE] Starting to sync defined tables to DB because we are in dev mode.',
     );
@@ -89,7 +91,7 @@ bot.on('ready', async () => {
     // sync force apparently also wipes the SequelizeMeta table,
     // which then errors on re-trying migrations
     await sequelize.sync({
-      force: wipeDB && process.env.NODE_ENV === 'development',
+      force: wipeDB && !productionMode,
     });
     console.info('[SEQUELIZE] Finished syncing defined tables to DB.');
   }
@@ -131,7 +133,7 @@ bot.on('error', (err) => {
 });
 
 bot.on('disconnect', () => {
-  console.log('Disconnected!');
+  console.info('Disconnected!');
 });
 
 bot.login(TOKEN); // connect to discord
