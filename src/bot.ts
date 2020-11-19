@@ -7,27 +7,31 @@ import Discord, { DiscordAPIError } from 'discord.js';
 import Umzug from 'umzug';
 import { Sequelize } from 'sequelize';
 import { sequelize } from './database/allModels';
-import { PREFIX, TOKEN, setUser } from './shared_assets';
+import {
+  PREFIX, TOKEN, setUser, productionMode,
+} from './shared_assets';
 // eslint-disable-next-line import/no-cycle
 import { checkCommand } from './commandHandler';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
 /* eslint-enable import/first */
 
-const umzug = new Umzug({
-  storage: 'sequelize',
-  storageOptions: {
-    sequelize, // here should be a sequelize instance, not the Sequelize module
-  },
-  migrations: {
-    params: [
-      sequelize.getQueryInterface(),
-      Sequelize, // Sequelize constructor - the required module
-    ],
-    path: './src/migrations',
-    pattern: /\.js$/,
-  },
-});
+const umzug = productionMode
+  ? new Umzug({
+    storage: 'sequelize',
+    storageOptions: {
+      sequelize, // here should be a sequelize instance, not the Sequelize module
+    },
+    migrations: {
+      params: [
+          sequelize!.getQueryInterface(),
+          Sequelize, // Sequelize constructor - the required module
+      ],
+      path: './src/migrations',
+      pattern: /\.js$/,
+    },
+  })
+  : null;
 
 export const bot = new Discord.Client();
 
@@ -61,35 +65,36 @@ process.on('unhandledRejection', async (
 // fires on startup and on reconnect
 let justStartedUp = true;
 bot.on('ready', async () => {
-  try {
-    console.info('[UMZUG] Applying pending migrations.');
-    const migrations = await umzug.up();
-    if (migrations.length > 0) {
-      console.info('[UMZUG] Applied migrations:');
-      /* eslint-disable no-restricted-syntax */
-      for (const m of migrations) {
-        console.info(` -  ${m.file}`);
+  if (productionMode) {
+    try {
+      console.info('[UMZUG] Applying pending migrations.');
+      const migrations = await umzug.up();
+      if (migrations.length > 0) {
+        console.info('[UMZUG] Applied migrations:');
+        /* eslint-disable no-restricted-syntax */
+        for (const m of migrations) {
+          console.info(` -  ${m.file}`);
+        }
+        /* eslint-enable no-restricted-syntax */
+      } else {
+        console.info('[UMZUG] Database is up to date.');
       }
-      /* eslint-enable no-restricted-syntax */
-    } else {
-      console.info('[UMZUG] Database is up to date.');
+    } catch (e) {
+      console.error('[UMZUG] Failed migrating database:');
+      console.error(e);
+      process.exit();
     }
-  } catch (e) {
-    console.error('[UMZUG] Failed migrating database:');
-    console.error(e);
-    process.exit();
   }
-
   const syncSequelizeModels = true;
-  if (syncSequelizeModels && process.env.NODE_ENV === 'development') {
+  if (syncSequelizeModels && productionMode) {
     console.info(
       '[SEQUELIZE] Starting to sync defined tables to DB because we are in dev mode.',
     );
     const wipeDB = false; // set to true if you changed the DB and are in dev mode
     // sync force apparently also wipes the SequelizeMeta table,
     // which then errors on re-trying migrations
-    await sequelize.sync({
-      force: wipeDB && process.env.NODE_ENV === 'development',
+    await sequelize!.sync({
+      force: wipeDB && !productionMode,
     });
     console.info('[SEQUELIZE] Finished syncing defined tables to DB.');
   }
@@ -131,7 +136,7 @@ bot.on('error', (err) => {
 });
 
 bot.on('disconnect', () => {
-  console.log('Disconnected!');
+  console.info('Disconnected!');
 });
 
 bot.login(TOKEN); // connect to discord

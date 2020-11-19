@@ -1,10 +1,10 @@
 import { Message } from 'discord.js';
 import { findMember } from './bamands';
 import { transferredPoints } from './database/allModels';
-import { hogwartsHouses } from './shared_assets';
+import { hogwartsHouses, productionMode } from './shared_assets';
 
 async function getHouseOfUser(memberID: string, msg: Message) {
-  const member = await msg.guild?.members.fetch(memberID);
+  const member = await msg.guild!.members.fetch(memberID);
   if (!member) {
     return null;
   }
@@ -16,14 +16,12 @@ async function getHouseOfUser(memberID: string, msg: Message) {
 }
 
 export async function handle(msg: Message) {
-  console.log('got into natural language handler');
-  const args = msg.content.split(' ');
+  const args = msg.content.split(' ').filter((arg) => arg !== '');
   console.log('args: ', args);
   if (args.length < 4 || args[1].toLowerCase() !== 'punkte') {
     return null;
   }
   const amount = Number(args[0]);
-  console.log('amount:', amount);
   if (!amount) {
     return msg.reply('invalid amount.');
   }
@@ -33,8 +31,6 @@ export async function handle(msg: Message) {
     );
   }
   const addition: boolean = args[2].toLowerCase() === 'für';
-  console.log('addition?:', addition);
-
   if (!addition) {
     if (
       !(args[2].toLowerCase() === 'abzug' && args[3].toLowerCase() === 'für')
@@ -42,31 +38,27 @@ export async function handle(msg: Message) {
       return msg.reply('i cant tell what youre trying to do tbh.');
     }
   }
-  console.log('still addition?:', addition);
-
   const mentionedUser = addition ? args[3] : args[4];
-  console.log('mentioned user:', mentionedUser);
+  const { userid, error } = await findMember(msg.guild!, mentionedUser);
 
-  const mentionedUserId = await findMember(msg.guild!, mentionedUser);
-  console.log('userID found:', mentionedUserId);
-  if (!mentionedUserId) {
-    return msg.reply('found no user of that name, bruh.');
+  if (error) {
+    return msg.reply(`found no user of that name, bruh\n${error}`);
   }
-
-  const userHouse = await getHouseOfUser(mentionedUserId, msg);
+  const userHouse = await getHouseOfUser(userid!, msg);
   if (!userHouse) {
-    return msg.reply('the user doesn\'t seem to have a house.');
+    return msg.reply("the user doesn't seem to have a house.");
   }
 
   // do something with our info
-  transferredPoints.upsert({
-    giver_id: msg.member!.id,
-    receiver_id: mentionedUserId,
-    amount: addition ? amount : amount * -1,
-    date: new Date(),
-    house: userHouse,
-    season: 1,
-  });
-
+  if (productionMode) {
+    transferredPoints!.upsert({
+      giver_id: msg.member!.id,
+      receiver_id: userid,
+      amount: addition ? amount : amount * -1,
+      date: new Date(),
+      house: userHouse,
+      season: 1,
+    });
+  }
   return msg.reply('done.');
 }

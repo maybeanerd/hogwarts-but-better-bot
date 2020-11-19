@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize';
+import { productionMode } from '../shared_assets';
 import transferredPointsModel from './transferredPoints';
 
 const dbPw = process.env.DATABASE_PW;
@@ -17,11 +18,15 @@ const sequelizeOptions = {
   host: 'localhost',
 };
 
-export const sequelize = new Sequelize.Sequelize(
-  'h31nd5_hogwarts-but-better-bot',
-  'h31nd5',
-  dbPw,
-  sequelizeOptions,
-);
+export const sequelize = productionMode
+  ? new Sequelize.Sequelize(
+    'h31nd5_hogwarts-but-better-bot',
+    'h31nd5',
+    dbPw,
+    sequelizeOptions,
+  )
+  : null;
 
-export const transferredPoints = transferredPointsModel(sequelize, Sequelize);
+export const transferredPoints = productionMode
+  ? transferredPointsModel(sequelize!, Sequelize)
+  : null;

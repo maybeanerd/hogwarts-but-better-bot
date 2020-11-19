@@ -4,36 +4,40 @@ import Discord, { Message } from 'discord.js';
 export async function findMember(
   guild: Discord.Guild,
   ment: string,
-): Promise<string | null> {
-  if (!ment) {
-    return null;
-  }
+): Promise<{ userid: string; error: null } | { error: string; userid: null }> {
   const mention = ment.toLowerCase();
   if (mention.startsWith('<@') && mention.endsWith('>')) {
     let id = mention.slice(2, -1);
     if (id.startsWith('!')) {
       id = id.substr(1);
     }
-    return id;
+    return { userid: id, error: null };
   }
   // this only works if its not a username, but the ID (NOT a mention)
-  const user = guild.member(mention);
-  if (user) {
-    return user.id;
+  if (/^\d+$/.test(mention)) {
+    const user = await guild.members.fetch(mention);
+    if (user) {
+      return { userid: user.id, error: null };
+    }
   }
-
   if (mention.length >= 3) {
-    // behavior of this query has not been tested!
-    // if it finds too many, maybe we want to filter before checking for length
     const potentialMembers = await guild.members.fetch({
       query: mention,
       limit: 2, // for performance reasons, as two is already too many
     });
     if (potentialMembers.size === 1) {
-      return potentialMembers.first()!.id;
+      return { userid: potentialMembers.first()!.id, error: null };
     }
+    if (potentialMembers.size > 1) {
+      return { error: 'Too many users match the mention.', userid: null };
+    }
+    return { error: 'No user matches this description.', userid: null };
   }
-  return null;
+  return {
+    error:
+      'Mention has to be either a mention, userID or nickname. Nicknames with less than 3 characters length are not supported.',
+    userid: null,
+  };
 }
 
 export async function findRole(guild: Discord.Guild, ment: string) {

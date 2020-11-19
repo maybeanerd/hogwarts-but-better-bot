@@ -25,3 +25,5 @@ export const hogwartsHouses = new Map([
   ['767863200427278336', hogwartsHouse.Hufflepuff],
   ['767863344128065576', hogwartsHouse.Ravenclaw],
 ]);
+
+export const productionMode = process.env.NODE_ENV !== 'development';
