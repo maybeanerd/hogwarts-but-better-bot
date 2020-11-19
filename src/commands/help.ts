@@ -14,7 +14,7 @@ export const help: botCommand = {
     if (!msg.guild) {
       return null;
     }
-    const ret = await transferredPoints!.findAll();
+    const ret = await transferredPoints.findAll();
     msg.reply(JSON.stringify(ret, null, 2).slice(0, 1900));
     return true;
     /*  const args = content.split(/ +/);

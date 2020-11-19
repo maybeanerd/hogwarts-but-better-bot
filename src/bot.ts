@@ -23,7 +23,7 @@ const umzug = new Umzug({
   },
   migrations: {
     params: [
-      sequelize!.getQueryInterface(),
+      sequelize.getQueryInterface(),
       Sequelize, // Sequelize constructor - the required module
     ],
     path: './src/migrations',
