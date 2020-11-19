@@ -4,20 +4,29 @@ import Discord, { Message } from 'discord.js';
 export async function findMember(
   guild: Discord.Guild,
   ment: string,
-): Promise<{ userid: string; error: null } | { error: string; userid: null }> {
-  const mention = ment.toLowerCase();
+): Promise<
+  { user: Discord.GuildMember; error: null } | { error: string; user: null }
+> {
+  let mention = ment.toLowerCase();
   if (mention.startsWith('<@') && mention.endsWith('>')) {
-    let id = mention.slice(2, -1);
-    if (id.startsWith('!')) {
-      id = id.substr(1);
+    mention = mention.slice(2, -1);
+    if (mention.startsWith('!')) {
+      mention = mention.substr(1);
     }
-    return { userid: id, error: null };
   }
   // this only works if its not a username, but the ID (NOT a mention)
-  if (/^\d+$/.test(mention)) {
-    const user = await guild.members.fetch(mention);
-    if (user) {
-      return { userid: user.id, error: null };
+  if (mention.length > 15 && /^\d+$/.test(mention)) {
+    try {
+      const user = await guild.members.fetch(mention);
+      if (user) {
+        return { user, error: null };
+      }
+    } catch (e) {
+      return {
+        error:
+          'It seemed to me you tried using a user ID, but I can`t find anyone with this particular one.',
+        user: null,
+      };
     }
   }
   if (mention.length >= 3) {
@@ -26,17 +35,17 @@ export async function findMember(
       limit: 2, // for performance reasons, as two is already too many
     });
     if (potentialMembers.size === 1) {
-      return { userid: potentialMembers.first()!.id, error: null };
+      return { user: potentialMembers.first()!, error: null };
     }
     if (potentialMembers.size > 1) {
-      return { error: 'Too many users match the mention.', userid: null };
+      return { error: 'Too many users match the mention.', user: null };
     }
-    return { error: 'No user matches this description.', userid: null };
+    return { error: 'No user matches this description.', user: null };
   }
   return {
     error:
       'Mention has to be either a mention, userID or nickname. Nicknames with less than 3 characters length are not supported.',
-    userid: null,
+    user: null,
   };
 }
 

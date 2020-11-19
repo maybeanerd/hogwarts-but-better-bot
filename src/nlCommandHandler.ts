@@ -1,10 +1,9 @@
-import { Message } from 'discord.js';
+import Discord, { Message } from 'discord.js';
 import { findMember } from './bamands';
 import { transferredPoints } from './database/allModels';
 import { hogwartsHouses, productionMode } from './shared_assets';
 
-async function getHouseOfUser(memberID: string, msg: Message) {
-  const member = await msg.guild!.members.fetch(memberID);
+async function getHouseOfUser(member: Discord.GuildMember) {
   if (!member) {
     return null;
   }
@@ -26,7 +25,7 @@ export async function handle(msg: Message) {
     return msg.reply('invalid amount.');
   }
   if (amount % 10 !== 0) {
-    msg.reply(
+    return msg.reply(
       'Invalid amount of points supplied, only multiples of 10 allowed.',
     );
   }
@@ -35,25 +34,25 @@ export async function handle(msg: Message) {
     if (
       !(args[2].toLowerCase() === 'abzug' && args[3].toLowerCase() === 'für')
     ) {
-      return msg.reply('i cant tell what youre trying to do tbh.');
+      return msg.reply('I cant tell what youre trying to do tbh.');
     }
   }
   const mentionedUser = addition ? args[3] : args[4];
-  const { userid, error } = await findMember(msg.guild!, mentionedUser);
+  const { user, error } = await findMember(msg.guild!, mentionedUser);
 
   if (error) {
-    return msg.reply(`found no user of that name, bruh\n${error}`);
+    return msg.reply(`Found no user of that name, bruh.\n${error}`);
   }
-  const userHouse = await getHouseOfUser(userid!, msg);
+  const userHouse = await getHouseOfUser(user!);
   if (!userHouse) {
-    return msg.reply("the user doesn't seem to have a house.");
+    return msg.reply(`${user!.displayName} doesn't seem to have a house.`);
   }
 
   // do something with our info
   if (productionMode) {
     transferredPoints!.upsert({
       giver_id: msg.member!.id,
-      receiver_id: userid,
+      receiver_id: user!.id,
       amount: addition ? amount : amount * -1,
       date: new Date(),
       house: userHouse,
