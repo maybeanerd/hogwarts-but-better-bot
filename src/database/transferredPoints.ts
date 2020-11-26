@@ -1,7 +1,22 @@
 import seq from 'sequelize';
+import { hogwartsHouse } from '../types/enums';
 
 export default (sequelize: seq.Sequelize, Sequelize: typeof seq) => {
-  class transferredPoints extends Sequelize.Model {}
+  class transferredPoints extends Sequelize.Model {
+    public id!: string;
+
+    public giver_id!: string;
+
+    public receiver_id!: string;
+
+    public amount!: number;
+
+    public date!: Date;
+
+    public house!: hogwartsHouse;
+
+    public season!: number;
+  }
   transferredPoints.init(
     {
       id: {

@@ -11,6 +11,11 @@ export const ERROR_COLOR = 0x0000ff;
 export const INFO_COLOR = 0x0000ff;
 export const SIGN = 'Hausbot - created by T0TProduction#0001 and h31nd5#0315';
 
+export const channelIDs = {
+  punktetracker: '781622087801634816',
+  errorchannel: '781597906100158504',
+};
+
 let bot_user: ClientUser;
 export function setUser(usr: ClientUser) {
   bot_user = usr;
@@ -20,10 +25,10 @@ export function user() {
 }
 
 export const hogwartsHouses = new Map([
-  ['767863150665924608', hogwartsHouse.Slytherin],
-  ['767863063285858304', hogwartsHouse.Gryffindor],
-  ['767863200427278336', hogwartsHouse.Hufflepuff],
-  ['767863344128065576', hogwartsHouse.Ravenclaw],
+  ['slytherin', hogwartsHouse.Slytherin],
+  ['gryffindor', hogwartsHouse.Gryffindor],
+  ['hufflepuff', hogwartsHouse.Hufflepuff],
+  ['ravenclaw', hogwartsHouse.Ravenclaw],
 ]);
 
 export const productionMode = process.env.NODE_ENV !== 'development';
