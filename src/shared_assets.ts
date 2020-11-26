@@ -1,4 +1,4 @@
-import { ClientUser } from 'discord.js';
+import { ClientUser, GuildMember } from 'discord.js';
 import { hogwartsHouse } from './types/enums';
 
 export const PREFIX = 'hbbb';
@@ -32,3 +32,10 @@ export const hogwartsHouses = new Map([
 ]);
 
 export const productionMode = process.env.NODE_ENV !== 'development';
+
+export function isAdmin(usr: GuildMember | null) {
+  return (
+    usr
+    && usr.roles.cache.find((role) => role.name.toLowerCase() === 'hauslehrer:in')
+  );
+}

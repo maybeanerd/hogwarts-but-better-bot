@@ -4,7 +4,9 @@ import { ping } from './commands/ping';
 // we allow this cycle once, as the help command also needs to list itself
 import { help } from './commands/help'; // eslint-disable-line import/no-cycle
 
-import { DELETE_COMMANDS, PREFIX, user } from './shared_assets';
+import {
+  DELETE_COMMANDS, isAdmin, PREFIX, user,
+} from './shared_assets';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
 import { accessLevel } from './types/enums';
@@ -15,10 +17,6 @@ export const commands: { [k: string]: botCommand } = {
   info,
   ping,
 };
-
-function isAdmin(usr: Discord.GuildMember | null) {
-  return (usr /*  && (await data.isAdmin(msg.guild.id, msg.member)) */);
-}
 
 async function catchError(error: Error, msg: Discord.Message, command: string) {
   console.error(
@@ -54,7 +52,7 @@ export async function checkCommand(msg: Discord.Message) {
     isMention = false;
   } else {
     // here we can have "natural language" commands
-    if (isAdmin(msg.member)) await handle(msg);
+    await handle(msg);
     return;
   }
 

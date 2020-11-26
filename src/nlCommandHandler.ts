@@ -4,7 +4,7 @@ import { transferredPoints } from './database/allModels';
 import { updateStats } from './housePointTracker';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
-import { hogwartsHouses } from './shared_assets';
+import { hogwartsHouses, isAdmin } from './shared_assets';
 import { hogwartsHouse } from './types/enums';
 
 function getPointGifs(house: hogwartsHouse, addition: boolean) {
@@ -24,13 +24,13 @@ function getPointGifs(house: hogwartsHouse, addition: boolean) {
     if (addition) {
       return 'https://media.discordapp.net/attachments/779119442184765492/781650546607128576/points_for_hufflepuff.gif';
     }
-    return 'https://media.discordapp.net/attachments/779119442184765492/781650552261836810/points_from_slytherin.gif';
+    return 'https://media.discordapp.net/attachments/779119442184765492/781650548784234527/points_from_hufflepuff.gif';
   }
   if (house === hogwartsHouse.Gryffindor) {
     if (addition) {
       return 'https://media.discordapp.net/attachments/779119442184765492/781650543759982602/points_for_gryffindor.gif';
     }
-    return 'https://media.discordapp.net/attachments/779119442184765492/781650548784234527/points_from_hufflepuff.gif';
+    return 'https://media.discordapp.net/attachments/779119442184765492/781650545685168208/points_from_gryffindor.gif';
   }
   return null;
 }
@@ -49,9 +49,18 @@ async function getHouseOfUser(member: Discord.GuildMember) {
 export async function handle(msg: Message) {
   try {
     const args = msg.content.split(' ').filter((arg) => arg !== '');
-    if (args.length < 4 || args[1].toLowerCase() !== 'punkte') {
+    if (
+      args.length < 4
+      || args.length > 5
+      || args[1].toLowerCase() !== 'punkte'
+    ) {
       return null;
     }
+
+    if (!isAdmin(msg.member)) {
+      return msg.reply('students are not allowed to do this.');
+    }
+
     const amount = Number(args[0]);
     if (!amount) {
       return msg.reply('invalid amount.');
