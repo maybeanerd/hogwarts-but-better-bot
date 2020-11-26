@@ -1,12 +1,13 @@
 ﻿import Discord from 'discord.js';
 // eslint-disable-next-line import/no-cycle
 import { bot } from './bot';
+import { channelIDs } from './shared_assets';
 
 const maxMessageLength = 1950;
 
 export async function catchErrorOnDiscord(message: string) {
   try {
-    /* const chann = bot.channels.fetch('414809410448261132');
+    const chann = await bot.channels.fetch(channelIDs.errorchannel);
     if (chann) {
       let idx = 0;
       for (let i = 0; i < message.length; i += maxMessageLength) {
@@ -17,7 +18,7 @@ export async function catchErrorOnDiscord(message: string) {
           `${idx}: ${message.substring(i, i + maxMessageLength)}`,
         );
       }
-    } */
+    }
   } catch (error) {
     console.error(error);
   }

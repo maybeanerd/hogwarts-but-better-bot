@@ -8,12 +8,13 @@ import Umzug from 'umzug';
 import { Sequelize } from 'sequelize';
 import { sequelize } from './database/allModels';
 import {
-  PREFIX, TOKEN, setUser, productionMode,
+  PREFIX, TOKEN, setUser, productionMode, channelIDs,
 } from './shared_assets';
 // eslint-disable-next-line import/no-cycle
 import { checkCommand } from './commandHandler';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
+import { trackAndCreateMessage } from './housePointTracker';
 /* eslint-enable import/first */
 
 const umzug = new Umzug({
@@ -100,12 +101,12 @@ bot.on('ready', async () => {
     throw new Error('FATAL Bot has no user.');
   }
   setUser(bot.user); // give user ID to other code
-  const chann = await bot.channels.fetch('382233880469438465');
+  const chann = await bot.channels.fetch(channelIDs.errorchannel);
   if (!chann || chann.type !== 'text') {
     console.error('Teabots Server Channel not found.');
   }
   if (justStartedUp) {
-    (chann as Discord.TextChannel).send('Running startup...');
+    (chann as Discord.TextChannel).send('Hello there, i`m back!');
     justStartedUp = false;
   } else {
     (chann as Discord.TextChannel).send('Just reconnected to Discord...');
@@ -118,6 +119,8 @@ bot.on('ready', async () => {
     },
     status: 'online',
   });
+
+  trackAndCreateMessage(bot);
 });
 
 bot.on('message', async (msg) => {
