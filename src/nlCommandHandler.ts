@@ -99,16 +99,18 @@ export async function handle(msg: Message) {
       season: 1,
     });
     updateStats();
-    return msg.channel.send({
-      embed: {
-        title: `${amount} Punkte ${!addition ? 'Abzug ' : ''}für ${
-          hogwartsHouse[userHouse]
-        }!`,
-        image: {
-          url: getPointGifs(userHouse, addition) || '',
+    return msg.channel.send(
+      `${amount} Punkte ${!addition ? 'Abzug ' : ''}für ${
+        hogwartsHouse[userHouse]
+      }!`,
+      {
+        embed: {
+          image: {
+            url: getPointGifs(userHouse, addition) || '',
+          },
         },
       },
-    });
+    );
   } catch (e) {
     await catchErrorOnDiscord(
       `Tried to read command from natural language and failed:\n\`\`\`${e}\`\`\``,
