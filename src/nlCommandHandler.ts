@@ -5,6 +5,7 @@ import { updateStats } from './housePointTracker';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
 import { hogwartsHouses } from './shared_assets';
+import { hogwartsHouse } from './types/enums';
 
 async function getHouseOfUser(member: Discord.GuildMember) {
   if (!member) {
@@ -61,8 +62,17 @@ export async function handle(msg: Message) {
       season: 1,
     });
     updateStats();
-
-    return msg.reply('done.');
+    return msg.channel.send(
+      `${amount} points for ${hogwartsHouse[userHouse]}`,
+      {
+        embed: {
+          image: {
+            url:
+              'https://media.discordapp.net/attachments/779119442184765492/781642723710730280/711ef52d26e1acd56de0969455708af5eab48245_hq.gif',
+          },
+        },
+      },
+    );
   } catch (e) {
     await catchErrorOnDiscord(
       `Tried to read command from natural language and failed:\n\`\`\`${e}\`\`\``,
