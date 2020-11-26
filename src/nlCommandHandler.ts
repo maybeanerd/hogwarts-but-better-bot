@@ -7,6 +7,34 @@ import { catchErrorOnDiscord } from './sendToMyDiscord';
 import { hogwartsHouses } from './shared_assets';
 import { hogwartsHouse } from './types/enums';
 
+function getPointGifs(house: hogwartsHouse, addition: boolean) {
+  if (house === hogwartsHouse.Slytherin) {
+    if (addition) {
+      return 'https://media.discordapp.net/attachments/779119442184765492/781650549623881728/points_for_slytherin.gif';
+    }
+    return 'https://media.discordapp.net/attachments/779119442184765492/781650552261836810/points_from_slytherin.gif';
+  }
+  if (house === hogwartsHouse.Ravenclaw) {
+    if (addition) {
+      return 'https://media.discordapp.net/attachments/779119442184765492/781650553511084052/points_for_ravenclaw.gif';
+    }
+    return 'https://media.discordapp.net/attachments/779119442184765492/781650540748341278/points_from_ravenclaw.gif';
+  }
+  if (house === hogwartsHouse.Hufflepuff) {
+    if (addition) {
+      return 'https://media.discordapp.net/attachments/779119442184765492/781650546607128576/points_for_hufflepuff.gif';
+    }
+    return 'https://media.discordapp.net/attachments/779119442184765492/781650552261836810/points_from_slytherin.gif';
+  }
+  if (house === hogwartsHouse.Gryffindor) {
+    if (addition) {
+      return 'https://media.discordapp.net/attachments/779119442184765492/781650543759982602/points_for_gryffindor.gif';
+    }
+    return 'https://media.discordapp.net/attachments/779119442184765492/781650548784234527/points_from_hufflepuff.gif';
+  }
+  return null;
+}
+
 async function getHouseOfUser(member: Discord.GuildMember) {
   if (!member) {
     return null;
@@ -69,8 +97,7 @@ export async function handle(msg: Message) {
       {
         embed: {
           image: {
-            url:
-              'https://media.discordapp.net/attachments/779119442184765492/781642723710730280/711ef52d26e1acd56de0969455708af5eab48245_hq.gif',
+            url: getPointGifs(userHouse, addition) || '',
           },
         },
       },
