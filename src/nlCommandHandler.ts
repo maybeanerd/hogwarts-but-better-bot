@@ -63,7 +63,9 @@ export async function handle(msg: Message) {
     });
     updateStats();
     return msg.channel.send(
-      `${amount} points for ${hogwartsHouse[userHouse]}`,
+      `${amount} Punkte ${!addition ? 'Abzug ' : ''}für ${
+        hogwartsHouse[userHouse]
+      }!`,
       {
         embed: {
           image: {
