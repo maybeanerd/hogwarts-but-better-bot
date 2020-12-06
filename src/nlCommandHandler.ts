@@ -37,6 +37,28 @@ function getPointGifs(house: hogwartsHouse, addition: boolean) {
   return null;
 }
 
+const bastisID = '185865492576075776';
+const memeUrl = 'https://media.giphy.com/media/Nx0rz3jtxtEre/giphy.gif';
+/** Nach Lukas Wunsch ein kleines easteregg */
+async function isBastiTheSenate(msg: Discord.Message) {
+  const lowercaseMsg = msg.content.toLowerCase();
+  if (
+    msg.author.id === bastisID
+    && lowercaseMsg.includes('senate')
+    && lowercaseMsg.includes('the')
+  ) {
+    await msg.channel.send('Did you ask for the senate?', {
+      embed: {
+        image: {
+          url: memeUrl,
+        },
+      },
+    });
+    return true;
+  }
+  return false;
+}
+
 async function getHouseOfUser(member: Discord.GuildMember) {
   if (!member) {
     return null;
@@ -50,6 +72,9 @@ async function getHouseOfUser(member: Discord.GuildMember) {
 
 export async function handle(msg: Message) {
   try {
+    if (await isBastiTheSenate(msg)) {
+      return null;
+    }
     const args = msg.content.split(' ').filter((arg) => arg !== '');
     if (
       args.length < 4
