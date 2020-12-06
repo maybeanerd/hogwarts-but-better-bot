@@ -10,6 +10,7 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
 import { accessLevel } from './types/enums';
+// eslint-disable-next-line import/no-cycle
 import { handle } from './nlCommandHandler';
 
 export const commands: { [k: string]: botCommand } = {

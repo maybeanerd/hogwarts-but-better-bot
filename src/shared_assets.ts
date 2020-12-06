@@ -9,12 +9,7 @@ export const COLOR = 0x351c75;
 export const SUCCESS_COLOR = 0x00ff00;
 export const ERROR_COLOR = 0x0000ff;
 export const INFO_COLOR = 0x0000ff;
-export const SIGN = 'Hausbot - created by T0TProduction#0001 and h31nd5#0315';
-
-export const channelIDs = {
-  punktetracker: '781622087801634816',
-  errorchannel: '781597906100158504',
-};
+export const SIGN = 'Hausbot - created by T0TProduction#0001 for Hogwarts but better';
 
 let bot_user: ClientUser;
 export function setUser(usr: ClientUser) {
@@ -32,6 +27,18 @@ export const hogwartsHouses = new Map([
 ]);
 
 export const productionMode = process.env.NODE_ENV !== 'development';
+
+export const channelIDs = productionMode
+  ? {
+    punktetracker: '781622087801634816', // TODO
+    errorchannel: '781597906100158504', // TODO
+    logchannel: '781597906100158504', // TODO
+  }
+  : {
+    punktetracker: '781622087801634816',
+    errorchannel: '781597906100158504',
+    logchannel: '781597906100158504',
+  };
 
 export function isAdmin(usr: GuildMember | null) {
   return (
