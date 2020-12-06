@@ -1,10 +1,12 @@
 import Discord, { Message } from 'discord.js';
 import { findMember } from './bamands';
+// eslint-disable-next-line import/no-cycle
+import { bot } from './bot';
 import { transferredPoints } from './database/allModels';
 import { updateStats } from './housePointTracker';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
-import { hogwartsHouses, isAdmin } from './shared_assets';
+import { channelIDs, hogwartsHouses, isAdmin } from './shared_assets';
 import { hogwartsHouse } from './types/enums';
 
 function getPointGifs(house: hogwartsHouse, addition: boolean) {
@@ -70,46 +72,76 @@ export async function handle(msg: Message) {
         'Invalid amount of points supplied, only multiples of 10 allowed.',
       );
     }
-    const addition: boolean = args[2].toLowerCase() === 'für';
+    const addition: boolean = args[2].toLowerCase() === 'für' || args[2].toLowerCase() === 'an';
     if (!addition) {
       if (
-        !(args[2].toLowerCase() === 'abzug' && args[3].toLowerCase() === 'für')
+        !(
+          args[2].toLowerCase() === 'abzug'
+          && (args[3].toLowerCase() === 'für' || args[3].toLowerCase() === 'von')
+        )
       ) {
         return msg.reply('I cant tell what youre trying to do tbh.');
       }
     }
     const mentionedUser = addition ? args[3] : args[4];
-    const { user, error } = await findMember(msg.guild!, mentionedUser);
+    let mentionedHouse = hogwartsHouses.get(mentionedUser.toLowerCase());
+    let pointReceiver: Discord.GuildMember;
+    if (mentionedHouse) {
+      pointReceiver = msg.member!;
+    } else {
+      const { user, error } = await findMember(msg.guild!, mentionedUser);
 
-    if (error) {
-      return msg.reply(`Found no user of that name, bruh.\n${error}`);
-    }
-    const userHouse = await getHouseOfUser(user!);
-    if (!userHouse) {
-      return msg.reply(`${user!.displayName} doesn't seem to have a house.`);
+      if (error) {
+        return msg.reply(`Found no user of that name, bruh.\n${error}`);
+      }
+      if (isAdmin(user)) {
+        return msg.reply(
+          'You could give anyone points. Anyone. And you try this. *disgraceful.*',
+        );
+      }
+
+      const userHouse = await getHouseOfUser(user!);
+      if (!userHouse) {
+        return msg.reply(`${user!.displayName} doesn't seem to have a house.`);
+      }
+      mentionedHouse = userHouse;
+      pointReceiver = user!;
     }
 
     // do something with our info
     await transferredPoints.upsert({
       giver_id: msg.member!.id,
-      receiver_id: user!.id,
+      // if we have no user and get here, the author gave a house points
+      receiver_id: pointReceiver!.id,
       amount: addition ? amount : amount * -1,
       date: new Date(),
-      house: userHouse,
+      house: mentionedHouse,
       season: 1,
     });
     updateStats();
-    return msg.channel.send(
+    await msg.channel.send(
       `${amount} Punkte ${!addition ? 'Abzug ' : ''}für ${
-        hogwartsHouse[userHouse]
+        hogwartsHouse[mentionedHouse]
       }!`,
       {
         embed: {
           image: {
-            url: getPointGifs(userHouse, addition) || '',
+            url: getPointGifs(mentionedHouse, addition) || '',
           },
         },
       },
+    );
+    const chann: Discord.TextChannel = (await bot.channels.fetch(
+      channelIDs.logchannel,
+    )) as any;
+    return chann.send(
+      `${amount} Punkte ${!addition ? 'Abzug ' : ''}für ${
+        pointReceiver.id !== msg.author.id
+          ? `${pointReceiver.displayName} vom Haus `
+          : ''
+      }${hogwartsHouse[mentionedHouse]}! Vergeben durch ${
+        msg.member!.displayName
+      }`,
     );
   } catch (e) {
     await catchErrorOnDiscord(

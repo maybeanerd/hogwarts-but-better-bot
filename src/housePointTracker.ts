@@ -56,7 +56,15 @@ export async function trackAndCreateMessage(bot: Discord.Client) {
   if (lastMessageByBot) {
     msg = lastMessageByBot;
   } else {
-    msg = await chann.send('calculating stats...');
+    msg = await chann.send({
+      embed: {
+        title: 'Calculating current house points...',
+        image: {
+          url:
+            'https://media.discordapp.net/attachments/779119442184765492/781635288551391242/1000.png',
+        },
+      },
+    });
   }
   await updateStats();
 }
