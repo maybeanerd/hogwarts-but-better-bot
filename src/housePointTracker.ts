@@ -48,7 +48,7 @@ export async function updateStats() {
 
 export async function trackAndCreateMessage(bot: Discord.Client) {
   const chann: Discord.TextChannel = (await bot.channels.fetch(
-    channelIDs.punktetracker,
+    channelIDs.pointtracker,
   )) as any;
   const messages = await chann.messages.fetch();
   const lastMessageByBot = messages.find((m) => m.author.id === bot.user!.id);

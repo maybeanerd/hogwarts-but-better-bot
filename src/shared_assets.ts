@@ -30,12 +30,12 @@ export const productionMode = process.env.NODE_ENV !== 'development';
 
 export const channelIDs = productionMode
   ? {
-    punktetracker: '781622087801634816', // TODO
-    errorchannel: '781597906100158504', // TODO
-    logchannel: '781597906100158504', // TODO
+    pointtracker: '785162601007939645',
+    errorchannel: '785162879556911144',
+    logchannel: '785162879556911144',
   }
   : {
-    punktetracker: '781622087801634816',
+    pointtracker: '781622087801634816',
     errorchannel: '781597906100158504',
     logchannel: '781597906100158504',
   };
