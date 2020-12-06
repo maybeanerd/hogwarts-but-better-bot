@@ -120,7 +120,7 @@ export async function handle(msg: Message) {
     });
     updateStats();
     await msg.channel.send(
-      `${amount} Punkte ${!addition ? 'Abzug ' : ''}für ${
+      `${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
         hogwartsHouse[mentionedHouse]
       }!`,
       {
@@ -135,13 +135,13 @@ export async function handle(msg: Message) {
       channelIDs.logchannel,
     )) as any;
     return chann.send(
-      `${amount} Punkte ${!addition ? 'Abzug ' : ''}für ${
+      `[LOG] : \`${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
         pointReceiver.id !== msg.author.id
           ? `${pointReceiver.displayName} vom Haus `
           : ''
-      }${hogwartsHouse[mentionedHouse]}! Vergeben durch ${
+      }${hogwartsHouse[mentionedHouse]}, vergeben durch ${
         msg.member!.displayName
-      }`,
+      }\``,
     );
   } catch (e) {
     await catchErrorOnDiscord(
