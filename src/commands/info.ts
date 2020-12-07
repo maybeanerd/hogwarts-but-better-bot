@@ -14,23 +14,15 @@ export const inf: botCommand = {
     }> = [];
 
     info.push({
-      name: 'Links',
+      name: 'How to support Development',
       value:
-        '[Invite me to your guild](https://discordapp.com/oauth2/authorize?client_id=384820232583249921&permissions=8&redirect_uri=https%3A%2F%2Fdiscord.gg%2F2Evcf4T&scope=bot)\n[Official support Discord](https://discord.gg/2Evcf4T)',
-      inline: false,
-    });
-
-    info.push({
-      name: 'How to support MagiBot',
-      value:
-        'Donate a buck via [Paypal](https://paypal.me/pools/c/8be5ok31vB)\nPledge on [MagiBots Patreon](https://www.patreon.com/MagiBot)\nLeave a review on [bots.ondiscord.xyz](https://bots.ondiscord.xyz/bots/384820232583249921)!',
+        'Donate a buck via [Paypal](https://paypal.me/pools/c/8be5ok31vB)\nPledge on [MagiBots Patreon](https://www.patreon.com/MagiBot)',
       inline: false,
     });
 
     info.push({
       name: 'A bit of background',
-      value:
-        "MagiBot is being developed in Germany by T0TProduction#0001 as a hobby project.\nIt was originally a private bot for a Discord guild themed after the Pokemon Magikarp which is the reason it's called MagiBot.",
+      value: 'Hausbot is a bot for Hogwarts, but better.',
       inline: false,
     });
 
@@ -51,7 +43,7 @@ export const inf: botCommand = {
       {
         name: '',
         value:
-          'Get some info about the bot as well as links to official MagiBot stuff.',
+          'Get some info about the bot as well as links to official Hausbot stuff.',
       },
     ];
   },
