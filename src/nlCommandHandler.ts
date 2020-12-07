@@ -38,7 +38,7 @@ function getPointGifs(house: hogwartsHouse, addition: boolean) {
 }
 
 const bastisID = '185865492576075776';
-const memeUrl = 'https://media.giphy.com/media/Nx0rz3jtxtEre/giphy.gif';
+const memeUrl = 'https://cdn.discordapp.com/attachments/779119442184765492/785545402882850826/bastiIsTheSenate.png';
 /** Nach Lukas Wunsch ein kleines easteregg */
 async function isBastiTheSenate(msg: Discord.Message) {
   const lowercaseMsg = msg.content.toLowerCase();
