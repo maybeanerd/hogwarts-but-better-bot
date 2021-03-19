@@ -6,7 +6,9 @@ import { transferredPoints } from './database/allModels';
 import { updateStats } from './housePointTracker';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
-import { channelIDs, hogwartsHouses, isAdmin } from './shared_assets';
+import {
+  channelIDs, currentSeason, hogwartsHouses, isAdmin,
+} from './shared_assets';
 import { hogwartsHouse } from './types/enums';
 
 function getPointGifs(house: hogwartsHouse, addition: boolean) {
@@ -133,7 +135,6 @@ export async function handle(msg: Message) {
       pointReceiver = user!;
     }
 
-    // do something with our info
     await transferredPoints.upsert({
       giver_id: msg.member!.id,
       // if we have no user and get here, the author gave a house points
@@ -141,7 +142,7 @@ export async function handle(msg: Message) {
       amount: addition ? amount : amount * -1,
       date: new Date(),
       house: mentionedHouse,
-      season: 1,
+      season: currentSeason,
     });
     updateStats();
     await msg.channel.send(

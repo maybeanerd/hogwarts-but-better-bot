@@ -1,7 +1,7 @@
 ﻿import Discord from 'discord.js';
 import { Sequelize } from 'sequelize';
 import { transferredPoints } from './database/allModels';
-import { channelIDs, hogwartsHouses } from './shared_assets';
+import { channelIDs, currentSeason, hogwartsHouses } from './shared_assets';
 import { hogwartsHouse } from './types/enums';
 
 let msg: Discord.Message | null;
@@ -16,7 +16,7 @@ export async function updateStats() {
       'season',
       [Sequelize.fn('sum', Sequelize.col('amount')), 'points'],
     ],
-    where: { season: 1 },
+    where: { season: currentSeason },
     group: ['house'],
     raw: true,
   })) as any;
@@ -35,7 +35,7 @@ export async function updateStats() {
   if (msg !== null) {
     msg = await msg.edit({
       embed: {
-        title: 'Current house points:',
+        title: `Current house points (Season ${currentSeason})`,
         fields,
         image: {
           url:
