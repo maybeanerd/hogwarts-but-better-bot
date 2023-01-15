@@ -13,7 +13,6 @@
     "discord-api-types": "0.37.28",
     "discord.js": "14.7.1",
     "dotenv": "16.0.3",
-    "forever": "4.0.3",
     "libsodium-wrappers": "0.7.10",
     "mysql2": "3.0.1",
     "sequelize": "6.28.0",
@@ -41,9 +40,7 @@
     "lint": "eslint \"src/**/*\"",
     "lint:fix": "eslint \"src/**/*\" --fix",
     "build": "rimraf ./dist && tsc",
-    "start": "node dist/bot.js",
-    "start:forever": "forever start dist/bot.js",
-    "stop": "forever stop dist/bot.js"
+    "start": "node dist/bot.js"
   },
   "repository": {
     "type": "git",

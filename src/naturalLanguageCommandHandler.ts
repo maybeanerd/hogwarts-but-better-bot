@@ -170,13 +170,13 @@ export async function handle(msg: Message) {
       channelIDs.logchannel,
     )) as any;
     return chann.send(
-      `[LOG] : \`${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
+      `[LOG] : ${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
         pointReceiver.id !== msg.author.id
           ? `${pointReceiver.displayName}(${pointReceiver.id}) vom Haus `
           : ''
       }${hogwartsHouse[mentionedHouse]},${
         reason ? `\nmit dem Grund \`${reason}\`` : ''
-      }\nvergeben durch ${msg.member!.displayName}(${msg.member!.id})\``,
+      }\nvergeben durch ${msg.member!.displayName}(${msg.member!.id})`,
     );
   } catch (e) {
     await catchErrorOnDiscord(
