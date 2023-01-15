@@ -14,5 +14,16 @@ services:
       - '3306'
     volumes:
       - my-sql:/var/lib/mysql
+  main:
+    build: .
+    # image: ${IMAGE_NAME}
+    image: hogwarts-but-better-bot
+    environment:
+      - TOKEN=${TOKEN}
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PW=${DB_PW}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
 volumes:
   my-sql:
