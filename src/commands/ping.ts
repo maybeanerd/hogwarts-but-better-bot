@@ -1,6 +1,8 @@
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { accessLevel } from '../types/enums';
+import { BotCommand } from '../types/magibot';
 
-export const ping: botCommand = {
+export const ping: BotCommand = {
   name: 'ping',
   dev: false,
   hide: false,
@@ -15,7 +17,7 @@ export const ping: botCommand = {
   ehelp() {
     return [{ name: '', value: 'Ping the bot and get the response time.' }];
   },
-  perm: 'SEND_MESSAGES',
+  perm: PermissionFlagsBits.SendMessages,
   admin: false,
   minAccessLevel: accessLevel.default,
 };

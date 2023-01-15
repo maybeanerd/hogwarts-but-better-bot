@@ -7,7 +7,10 @@ import { updateStats } from './housePointTracker';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
 import {
-  channelIDs, currentSeason, hogwartsHouses, isAdmin,
+  channelIDs,
+  currentSeason,
+  hogwartsHouses,
+  isAdmin,
 } from './shared_assets';
 import { hogwartsHouse } from './types/enums';
 
@@ -49,12 +52,15 @@ async function isBastiTheSenate(msg: Discord.Message) {
     && lowercaseMsg.includes('senate')
     && lowercaseMsg.includes('the')
   ) {
-    await msg.channel.send('Did you ask for the senate?', {
-      embed: {
-        image: {
-          url: memeUrl,
+    await msg.channel.send({
+      content: 'Did you ask for the senate?',
+      embeds: [
+        {
+          image: {
+            url: memeUrl,
+          },
         },
-      },
+      ],
     });
     return true;
   }
@@ -145,18 +151,18 @@ export async function handle(msg: Message) {
       season: currentSeason,
     });
     updateStats();
-    await msg.channel.send(
-      `${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
+    await msg.channel.send({
+      content: `${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
         hogwartsHouse[mentionedHouse]
       }!`,
-      {
-        embed: {
+      embeds: [
+        {
           image: {
             url: getPointGifs(mentionedHouse, addition) || '',
           },
         },
-      },
-    );
+      ],
+    });
     const chann: Discord.TextChannel = (await bot.channels.fetch(
       channelIDs.logchannel,
     )) as any;

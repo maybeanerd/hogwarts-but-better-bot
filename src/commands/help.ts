@@ -1,10 +1,12 @@
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { accessLevel } from '../types/enums';
+import { BotCommand } from '../types/magibot';
 
-export const help: botCommand = {
+export const help: BotCommand = {
   name: 'help',
   minAccessLevel: accessLevel.default,
   admin: false,
-  perm: 'SEND_MESSAGES',
+  perm: PermissionFlagsBits.SendMessages,
   main: async function main(content, msg) {
     if (!msg.guild) {
       return null;
@@ -47,7 +49,8 @@ export const help: botCommand = {
           footer: {
             iconURL: user().avatarURL() || '',
             text:
-              '<required input> , [optional input] , choose|one|of|these , (comment on the command)',
+              '<required input> , [optional input] ,
+               choose|one|of|these , (comment on the command)',
           },
         };
         msg.channel.send('', { embed });
@@ -80,7 +83,8 @@ export const help: botCommand = {
               footer: {
                 iconURL: user().avatarURL() || '',
                 text:
-                  '<required input> , [optional input] , choose|one|of|these , (comment on the command)',
+                  '<required input> , [optional input] ,
+                   choose|one|of|these , (comment on the command)',
               },
             };
             msg.channel.send('', { embed });
@@ -116,7 +120,8 @@ export const help: botCommand = {
             footer: {
               iconURL: user().avatarURL() || '',
               text:
-                '<required input> , [optional input] , choose|one|of|these , (comment on the command)',
+                '<required input> , [optional input] ,
+                choose|one|of|these , (comment on the command)',
             },
           };
 

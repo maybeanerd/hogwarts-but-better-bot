@@ -1,4 +1,4 @@
-﻿// commands made by Basti for use of the Bot
+// commands made by Basti for use of the Bot
 import Discord, { Message } from 'discord.js';
 
 export async function findMember(
@@ -66,12 +66,12 @@ export async function findRole(guild: Discord.Guild, ment: string) {
   if (mention.length >= 3) {
     let roleArray = guild.roles.cache.filter((rol) => rol.name.toLowerCase().startsWith(mention));
     if (roleArray.size === 1) {
-      return roleArray[0].id;
+      return roleArray.first()?.id;
     }
     if (roleArray.size === 0) {
       roleArray = guild.roles.cache.filter((rol) => rol.name.toLowerCase().includes(mention));
       if (roleArray.size === 1) {
-        return roleArray[0].id;
+        return roleArray.first()?.id;
       }
     }
   }
@@ -96,7 +96,7 @@ export async function yesOrNo(
       time = 20000;
     }
     return (mess as Message)
-      .awaitReactions(filter, { max: 1, time })
+      .awaitReactions({ filter, max: 1, time })
       .then(async (reacts) => {
         (mess as Message).delete();
         const firstReacts = reacts.first();
@@ -119,7 +119,9 @@ export async function yesOrNo(
   });
 }
 
-export function printError(error) {
+export function printError(error: {
+  response: { status: number; statusText: string };
+}) {
   console.error(
     `Errorstatus: ${error.response.status} ${error.response.statusText}`,
   );

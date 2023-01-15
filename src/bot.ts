@@ -1,14 +1,16 @@
-﻿import { config } from 'dotenv';
+import { config } from 'dotenv';
 
 config();
 
 /* eslint-disable import/first */
-import Discord, { DiscordAPIError } from 'discord.js';
+import Discord, {
+  ActivityType, ChannelType, DiscordAPIError, GatewayIntentBits,
+} from 'discord.js';
 import Umzug from 'umzug';
 import { Sequelize } from 'sequelize';
 import { sequelize } from './database/allModels';
 import {
-  PREFIX, TOKEN, setUser, productionMode, channelIDs,
+  TOKEN, setUser, productionMode, channelIDs,
 } from './shared_assets';
 // eslint-disable-next-line import/no-cycle
 import { checkCommand } from './commandHandler';
@@ -32,7 +34,15 @@ const umzug = new Umzug({
   },
 });
 
-export const bot = new Discord.Client();
+const intents = [
+  GatewayIntentBits.Guilds,
+  GatewayIntentBits.GuildIntegrations, // prob not needed ATM
+  GatewayIntentBits.GuildMessages,
+  GatewayIntentBits.MessageContent,
+  GatewayIntentBits.GuildMessageReactions, // prob not needed ATM
+];
+
+export const bot = new Discord.Client({ intents });
 
 process.on('uncaughtException', async (err) => {
   console.error(`Uncaught Exception:\n${err.stack ? err.stack : err}`);
@@ -102,7 +112,7 @@ bot.on('ready', async () => {
   }
   setUser(bot.user); // give user ID to other code
   const chann = await bot.channels.fetch(channelIDs.errorchannel);
-  if (!chann || chann.type !== 'text') {
+  if (!chann || chann.type !== ChannelType.GuildText) {
     console.error('Teabots Server Channel not found.');
   }
   if (justStartedUp) {
@@ -112,18 +122,20 @@ bot.on('ready', async () => {
     (chann as Discord.TextChannel).send('Just reconnected to Discord...');
   }
   await bot.user.setPresence({
-    activity: {
-      name: `${PREFIX}.help`,
-      type: 'WATCHING',
-      url: 'https://bots.ondiscord.xyz/bots/384820232583249921',
-    },
+    activities: [
+      {
+        name: 'the students',
+        type: ActivityType.Watching,
+      },
+    ],
     status: 'online',
   });
 
   trackAndCreateMessage(bot);
 });
 
-bot.on('message', async (msg) => {
+bot.on('messageCreate', async (msg) => {
+  console.log('Message received: ', msg.content);
   try {
     await checkCommand(msg as Discord.Message);
   } catch (err) {

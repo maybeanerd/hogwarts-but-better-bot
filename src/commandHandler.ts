@@ -1,4 +1,5 @@
-import Discord, { Message } from 'discord.js';
+import Discord from 'discord.js';
+import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { inf as info } from './commands/info';
 import { ping } from './commands/ping';
 // we allow this cycle once, as the help command also needs to list itself
@@ -11,9 +12,10 @@ import {
 import { catchErrorOnDiscord } from './sendToMyDiscord';
 import { accessLevel } from './types/enums';
 // eslint-disable-next-line import/no-cycle
-import { handle } from './nlCommandHandler';
+import { handle } from './naturalLanguageCommandHandler';
+import { BotCommand } from './types/magibot';
 
-export const commands: { [k: string]: botCommand } = {
+export const commands: { [k: string]: BotCommand } = {
   help,
   info,
   ping,
@@ -34,12 +36,12 @@ If you can reproduce this, consider using \`${PREFIX}.bug <bugreport>\` or join 
 const userCooldowns = new Set<string>();
 
 export async function checkCommand(msg: Discord.Message) {
-  if (!(msg.author && msg.guild && msg.guild.me)) {
+  if (!(msg.author && msg.guild && msg.guild.members.me)) {
     // check for valid message
     console.error('Invalid message received:', msg);
     return;
   }
-  if (!(!msg.author.bot && msg.channel.type === 'text')) {
+  if (!(!msg.author.bot && msg.channel.type === ChannelType.GuildText)) {
     // check for in guild and text channel
     return;
   }
@@ -79,7 +81,7 @@ export async function checkCommand(msg: Discord.Message) {
     let commandVal: string;
     const pre = command.charAt(0);
     const myPerms = (msg.channel as Discord.TextChannel).permissionsFor(
-      msg.guild.me,
+      msg.guild.members.me,
     );
     if (pre === '.') {
       command = command.slice(1);
@@ -91,13 +93,13 @@ export async function checkCommand(msg: Discord.Message) {
     if (cmd && cmd.minAccessLevel === accessLevel.admin) {
       if (isAdmin(msg.member)) {
         if (myPerms) {
-          if (myPerms.has('MANAGE_MESSAGES')) {
+          if (myPerms.has(PermissionFlagsBits.ManageMessages)) {
             msg.delete();
           }
-          if (myPerms.has('SEND_MESSAGES')) {
+          if (myPerms.has(PermissionFlagsBits.SendMessages)) {
             msg
               .reply("you're not allowed to use this command.")
-              .then((mess) => (mess as Discord.Message).delete({ timeout: 5000 }));
+              .then((mess) => setTimeout(() => mess.delete(), 5000));
           }
         }
         return;
@@ -119,19 +121,19 @@ export async function checkCommand(msg: Discord.Message) {
             try {
               await commands[command].main(content, msg);
             } catch (err) {
-              catchError(err, msg, `${PREFIX}${pre}${commandVal}`);
+              catchError(err as Error, msg, `${PREFIX}${pre}${commandVal}`);
             }
-          } else if (myPerms && myPerms.has('SEND_MESSAGES')) {
+          } else if (myPerms && myPerms.has(PermissionFlagsBits.SendMessages)) {
             msg.reply("whoa cool down, you're using commands too quick!");
           }
           // endof cooldown management
-        } else if (myPerms && myPerms.has('SEND_MESSAGES')) {
+        } else if (myPerms && myPerms.has(PermissionFlagsBits.SendMessages)) {
           msg.channel.send(
             `I don't have the permissions needed for this command. (${perms}) `,
           );
         }
-      } else if (myPerms && myPerms.has('SEND_MESSAGES')) {
-        if (myPerms && myPerms.has('MANAGE_MESSAGES')) {
+      } else if (myPerms && myPerms.has(PermissionFlagsBits.SendMessages)) {
+        if (myPerms && myPerms.has(PermissionFlagsBits.ManageMessages)) {
           msg.delete();
         }
         msg
@@ -142,7 +144,7 @@ export async function checkCommand(msg: Discord.Message) {
             ) */ ''
             }. If you're an admin use \`${PREFIX}:help\` to see how you can change that.`,
           )
-          .then((mess) => (mess as Message).delete({ timeout: 15000 }));
+          .then((mess) => setTimeout(() => mess.delete(), 15000));
       }
     }
   }
