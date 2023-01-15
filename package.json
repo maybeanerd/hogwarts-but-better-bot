@@ -9,20 +9,20 @@
   },
   "dependencies": {
     "@discordjs/builders": "1.4.0",
-    "axios": "^1.2.1",
+    "axios": "1.2.1",
     "discord-api-types": "0.37.28",
     "discord.js": "14.7.1",
     "dotenv": "16.0.3",
     "forever": "4.0.3",
-    "libsodium-wrappers": "^0.7.10",
-    "mysql2": "^3.0.0",
-    "sequelize": "^6.28.0",
-    "umzug": "^2.3.0"
+    "libsodium-wrappers": "0.7.10",
+    "mysql2": "3.0.0",
+    "sequelize": "6.28.0",
+    "umzug": "2.3.0"
   },
   "optionalDependencies": {
-    "@discordjs/opus": "^0.9.0",
-    "sodium": "^3.0.2",
-    "zlib-sync": "^0.1.7"
+    "@discordjs/opus": "0.9.0",
+    "sodium": "3.0.2",
+    "zlib-sync": "0.1.7"
   },
   "devDependencies": {
     "@types/node": "16.18.11",
