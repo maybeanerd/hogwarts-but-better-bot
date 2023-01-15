@@ -84,11 +84,7 @@ export async function handle(msg: Message) {
       return null;
     }
     const args = msg.content.split(' ').filter((arg) => arg !== '');
-    if (
-      args.length < 4
-      || args.length > 5
-      || args[1].toLowerCase() !== 'punkte'
-    ) {
+    if (args.length < 4 || args[1].toLowerCase() !== 'punkte') {
       return null;
     }
 
@@ -141,16 +137,22 @@ export async function handle(msg: Message) {
       pointReceiver = user!;
     }
 
+    const reasonOffset = addition ? 4 : 5;
+    const arrayOfReason = args.slice(reasonOffset);
+    const reason = arrayOfReason.length > 0 ? arrayOfReason.join(' ').slice(0, 1000) : null;
+
     await transferredPoints.upsert({
       giver_id: msg.member!.id,
-      // if we have no user and get here, the author gave a house points
-      receiver_id: pointReceiver!.id,
+      receiver_id: pointReceiver.id,
       amount: addition ? amount : amount * -1,
       date: new Date(),
       house: mentionedHouse,
       season: currentSeason,
+      reason,
     });
+
     updateStats();
+
     await msg.channel.send({
       content: `${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
         hogwartsHouse[mentionedHouse]
@@ -163,17 +165,18 @@ export async function handle(msg: Message) {
         },
       ],
     });
+
     const chann: Discord.TextChannel = (await bot.channels.fetch(
       channelIDs.logchannel,
     )) as any;
     return chann.send(
       `[LOG] : \`${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
         pointReceiver.id !== msg.author.id
-          ? `${pointReceiver.displayName} vom Haus `
+          ? `${pointReceiver.displayName}(${pointReceiver.id}) vom Haus `
           : ''
-      }${hogwartsHouse[mentionedHouse]}, vergeben durch ${
-        msg.member!.displayName
-      }\``,
+      }${hogwartsHouse[mentionedHouse]},${
+        reason ? `\nmit dem Grund \`${reason}\`` : ''
+      }\nvergeben durch ${msg.member!.displayName}(${msg.member!.id})\``,
     );
   } catch (e) {
     await catchErrorOnDiscord(

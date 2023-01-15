@@ -2,7 +2,7 @@ import seq from 'sequelize';
 import { hogwartsHouse } from '../types/enums';
 
 export default (sequelize: seq.Sequelize, Sequelize: typeof seq) => {
-  class transferredPoints extends Sequelize.Model {
+  class transferredPoints extends seq.Model {
     public id!: string;
 
     public giver_id!: string;
@@ -16,6 +16,8 @@ export default (sequelize: seq.Sequelize, Sequelize: typeof seq) => {
     public house!: hogwartsHouse;
 
     public season!: number;
+
+    public reason!: string | null;
   }
   transferredPoints.init(
     {
@@ -54,6 +56,11 @@ export default (sequelize: seq.Sequelize, Sequelize: typeof seq) => {
         allowNull: false,
         defaultValue: 1,
         comment: 'House Cup season this occurred in.',
+      },
+      reason: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        comment: 'The reason for transferring points.',
       },
     },
     { sequelize },
