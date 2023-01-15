@@ -1,9 +1,11 @@
-import { MessageEmbedOptions } from 'discord.js';
+import { EmbedBuilder } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { COLOR, user, SIGN } from '../shared_assets';
 
 import { accessLevel } from '../types/enums';
+import { BotCommand } from '../types/magibot';
 
-export const inf: botCommand = {
+export const inf: BotCommand = {
   dev: false,
   name: 'info',
   main: (content, msg) => {
@@ -26,17 +28,17 @@ export const inf: botCommand = {
       inline: false,
     });
 
-    const embed: MessageEmbedOptions = {
+    const embed = new EmbedBuilder({
       color: COLOR,
       description: 'Some information about the bot:',
       fields: info,
       footer: {
-        iconURL: user().avatarURL() || '',
+        icon_url: user().avatarURL() || '',
         text: SIGN,
       },
-    };
+    });
 
-    msg.channel.send({ embed });
+    msg.channel.send({ embeds: [embed] });
   },
   ehelp() {
     return [
@@ -47,7 +49,7 @@ export const inf: botCommand = {
       },
     ];
   },
-  perm: 'SEND_MESSAGES',
+  perm: PermissionFlagsBits.SendMessages,
   admin: false,
   hide: false,
   minAccessLevel: accessLevel.default,

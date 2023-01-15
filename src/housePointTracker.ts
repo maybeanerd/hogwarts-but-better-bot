@@ -1,4 +1,5 @@
-﻿import Discord from 'discord.js';
+import { EmbedBuilder } from '@discordjs/builders';
+import Discord from 'discord.js';
 import { Sequelize } from 'sequelize';
 import { transferredPoints } from './database/allModels';
 import { channelIDs, currentSeason, hogwartsHouses } from './shared_assets';
@@ -25,23 +26,25 @@ export async function updateStats() {
       amounts.push({ house: h, points: 0 });
     }
   });
-  const fields: Array<Discord.EmbedFieldData> = amounts
+  const fields: Array<Discord.EmbedField> = amounts
     .sort((a, b) => b.points - a.points)
     .map((entry) => ({
       name: hogwartsHouse[entry.house],
-      value: Math.max(0, Number(entry.points) + 100),
+      value: String(Math.max(0, Number(entry.points) + 100)),
+      inline: false,
     }));
 
   if (msg !== null) {
     msg = await msg.edit({
-      embed: {
-        title: `Current house points (Season ${currentSeason})`,
-        fields,
-        image: {
-          url:
-            'https://media.discordapp.net/attachments/779119442184765492/781635288551391242/1000.png',
-        },
-      },
+      embeds: [
+        new EmbedBuilder({
+          title: `Current house points (Season ${currentSeason})`,
+          fields,
+          image: {
+            url: 'https://media.discordapp.net/attachments/779119442184765492/781635288551391242/1000.png',
+          },
+        }),
+      ],
     });
   }
 }
@@ -57,13 +60,14 @@ export async function trackAndCreateMessage(bot: Discord.Client) {
     msg = lastMessageByBot;
   } else {
     msg = await chann.send({
-      embed: {
-        title: 'Calculating current house points...',
-        image: {
-          url:
-            'https://media.discordapp.net/attachments/779119442184765492/781635288551391242/1000.png',
+      embeds: [
+        {
+          title: 'Calculating current house points...',
+          image: {
+            url: 'https://media.discordapp.net/attachments/779119442184765492/781635288551391242/1000.png',
+          },
         },
-      },
+      ],
     });
   }
   await updateStats();

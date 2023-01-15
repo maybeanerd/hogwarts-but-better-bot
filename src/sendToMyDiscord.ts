@@ -1,4 +1,4 @@
-﻿import Discord from 'discord.js';
+import Discord from 'discord.js';
 // eslint-disable-next-line import/no-cycle
 import { bot } from './bot';
 import { channelIDs } from './shared_assets';
