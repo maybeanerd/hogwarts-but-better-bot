@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@discordjs/builders": "1.4.0",
-    "axios": "1.2.4",
+    "axios": "1.2.5",
     "discord-api-types": "0.37.29",
     "discord.js": "14.7.1",
     "dotenv": "16.0.3",
