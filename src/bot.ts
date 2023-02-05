@@ -4,10 +4,12 @@ config();
 
 /* eslint-disable import/first */
 import Discord, {
-  ActivityType, ChannelType, DiscordAPIError, GatewayIntentBits,
+  ActivityType,
+  ChannelType,
+  DiscordAPIError,
+  GatewayIntentBits,
 } from 'discord.js';
-import Umzug from 'umzug';
-import { Sequelize } from 'sequelize';
+import { SequelizeStorage, Umzug } from 'umzug';
 import { sequelize } from './database/allModels';
 import {
   TOKEN, setUser, productionMode, channelIDs,
@@ -20,18 +22,14 @@ import { trackAndCreateMessage } from './housePointTracker';
 /* eslint-enable import/first */
 
 const umzug = new Umzug({
-  storage: 'sequelize',
-  storageOptions: {
-    sequelize, // here should be a sequelize instance, not the Sequelize module
-  },
+  storage: new SequelizeStorage({
+    sequelize,
+  }),
   migrations: {
-    params: [
-      sequelize.getQueryInterface(),
-      Sequelize, // Sequelize constructor - the required module
-    ],
-    path: './src/migrations',
-    pattern: /\.js$/,
+    glob: './src/migrations/*.js',
   },
+  context: sequelize.getQueryInterface(),
+  logger: console,
 });
 
 const intents = [
@@ -50,26 +48,27 @@ process.on('uncaughtException', async (err) => {
     `**Uncaught Exception:**\n\`\`\`${err.stack ? err.stack : err}\`\`\``,
   );
 });
-process.on('unhandledRejection', async (
-  err: any, /* to fix weird type issues */
-) => {
-  console.error(`Unhandled promise rejection:\n${err}`);
-  if (err) {
-    if (err instanceof DiscordAPIError) {
-      await catchErrorOnDiscord(
-        `**DiscordAPIError (${err.message || 'NONE'}):**\n\`\`\`${
-          err.message
-        }\`\`\`\`\`\`${err.stack ? err.stack.substring(0, 1200) : ''}\`\`\``,
-      );
-    } else {
-      await catchErrorOnDiscord(
-        `**Outer Unhandled promise rejection:**\n\`\`\`${err}\`\`\`\`\`\`${
-          err.stack ? err.stack.substring(0, 1200) : ''
-        }\`\`\``,
-      );
+process.on(
+  'unhandledRejection',
+  async (err: any /* to fix weird type issues */) => {
+    console.error(`Unhandled promise rejection:\n${err}`);
+    if (err) {
+      if (err instanceof DiscordAPIError) {
+        await catchErrorOnDiscord(
+          `**DiscordAPIError (${err.message || 'NONE'}):**\n\`\`\`${
+            err.message
+          }\`\`\`\`\`\`${err.stack ? err.stack.substring(0, 1200) : ''}\`\`\``,
+        );
+      } else {
+        await catchErrorOnDiscord(
+          `**Outer Unhandled promise rejection:**\n\`\`\`${err}\`\`\`\`\`\`${
+            err.stack ? err.stack.substring(0, 1200) : ''
+          }\`\`\``,
+        );
+      }
     }
-  }
-});
+  },
+);
 
 // fires on startup and on reconnect
 let justStartedUp = true;
@@ -81,7 +80,7 @@ bot.on('ready', async () => {
       console.info('[UMZUG] Applied migrations:');
       /* eslint-disable no-restricted-syntax */
       for (const m of migrations) {
-        console.info(` -  ${m.file}`);
+        console.info(` -  ${m.name}`);
       }
       /* eslint-enable no-restricted-syntax */
     } else {
