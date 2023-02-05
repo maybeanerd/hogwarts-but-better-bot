@@ -1,7 +1,10 @@
+const { Sequelize } = require('sequelize');
+
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.sequelize.transaction(
-    async (transaction) => {
-      await queryInterface.createTable('transferredPoints', {
+  up: ({ context }) => context.sequelize.transaction(async (transaction) => {
+    await context.createTable(
+      'transferredPoints',
+      {
         id: {
           type: Sequelize.BIGINT,
           primaryKey: true,
@@ -38,20 +41,19 @@ module.exports = {
           defaultValue: 1,
           comment: 'House Cup season this occurred in.',
         },
-      }, {
+      },
+      {
         transaction,
-      });
+      },
+    );
 
-      return true;
-    },
-  ),
-  down: (queryInterface /* , Sequelize */) => queryInterface.sequelize.transaction(
-    async (transaction) => {
-      await queryInterface.dropTable('transferredPoints', {
-        transaction,
-      });
+    return true;
+  }),
+  down: ({ context }) => context.sequelize.transaction(async (transaction) => {
+    await context.dropTable('transferredPoints', {
+      transaction,
+    });
 
-      return true;
-    },
-  ),
+    return true;
+  }),
 };

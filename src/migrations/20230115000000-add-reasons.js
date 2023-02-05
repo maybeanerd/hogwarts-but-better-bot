@@ -1,6 +1,8 @@
+const { Sequelize } = require('sequelize');
+
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.sequelize.transaction(async (transaction) => {
-    await queryInterface.addColumn(
+  up: ({ context }) => context.sequelize.transaction(async (transaction) => {
+    await context.addColumn(
       'transferredPoints',
       'reason',
       {
@@ -15,13 +17,11 @@ module.exports = {
 
     return true;
   }),
-  down: (queryInterface /* , Sequelize */) => queryInterface.sequelize.transaction(
-    async (transaction) => {
-      await queryInterface.removeColumn('transferredPoints', 'reason', {
-        transaction,
-      });
+  down: ({ context }) => context.sequelize.transaction(async (transaction) => {
+    await context.removeColumn('transferredPoints', 'reason', {
+      transaction,
+    });
 
-      return true;
-    },
-  ),
+    return true;
+  }),
 };

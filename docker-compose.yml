@@ -4,10 +4,10 @@ services:
     image: mysql:8
     restart: always
     environment:
-      MYSQL_DATABASE: 'db'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PW}
+      MYSQL_ROOT_PASSWORD: ${DB_PW}
     ports:
       - '3306:3306'
     expose:
@@ -20,10 +20,11 @@ services:
     image: hogwarts-but-better-bot
     environment:
       - TOKEN=${TOKEN}
-      - DB_URL=${DB_URL}
+      - DB_URL=db
       - DB_USERNAME=${DB_USERNAME}
       - DB_PW=${DB_PW}
       - DB_PORT=${DB_PORT}
       - DB_NAME=${DB_NAME}
+      - NODE_ENV=development
 volumes:
   my-sql:
