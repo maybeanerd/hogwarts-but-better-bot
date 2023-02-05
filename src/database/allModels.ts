@@ -10,8 +10,8 @@ if (!DB_PW) {
   throw new Error('Missing DB credentials');
 }
 
-const sequelizeOptions = {
-  dialect: 'mysql' as 'mysql', // To make sequelizes type check shut up, as string is not a compatible type to the string literals we can choose from
+const sequelizeOptions: Sequelize.Options = {
+  dialect: 'mysql',
   logging: false && !productionMode,
   define: {
     // do not automatically add timestamps, this only helps when using sequelize to write/read
