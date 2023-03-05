@@ -8,7 +8,7 @@ import { updateStats } from './housePointTracker';
 import { catchErrorOnDiscord } from './sendToMyDiscord';
 import {
   channelIDs,
-  currentSeason,
+  getCurrentSeason,
   hogwartsHouses,
   isAdmin,
 } from './shared_assets';
@@ -147,7 +147,7 @@ export async function handle(msg: Message) {
       amount: addition ? amount : amount * -1,
       date: new Date(),
       house: mentionedHouse,
-      season: currentSeason,
+      season: getCurrentSeason(),
       reason,
     });
 
