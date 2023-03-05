@@ -72,3 +72,38 @@ export async function trackAndCreateMessage(bot: Discord.Client) {
   }
   await updateStats();
 }
+
+export async function statsOfPastSeasons() {
+  const pointsPerHousePerSeason: Array<{
+    house: hogwartsHouse;
+    points: number;
+    season: number;
+  }> = (await transferredPoints.findAll({
+    attributes: [
+      'house',
+      'season',
+      [Sequelize.fn('sum', Sequelize.col('amount')), 'points'],
+    ],
+    group: ['house', 'season'],
+    raw: true,
+  })) as any;
+
+  const winningHousePerSeason = new Map<
+    number,
+    { house: hogwartsHouse; points: number }
+  >();
+
+  pointsPerHousePerSeason.forEach((entry) => {
+    const current = winningHousePerSeason.get(entry.season);
+    if (!current || current.points < entry.points) {
+      winningHousePerSeason.set(entry.season, {
+        house: entry.house,
+        points: entry.points,
+      });
+    }
+  });
+
+  return Array.from(winningHousePerSeason.entries())
+    .map(([season, { house, points }]) => ({ season, house, points }))
+    .sort((a, b) => b.season - a.season);
+}
