@@ -2,7 +2,7 @@ import { EmbedBuilder } from '@discordjs/builders';
 import Discord from 'discord.js';
 import { Sequelize } from 'sequelize';
 import { transferredPoints } from './database/allModels';
-import { channelIDs, currentSeason, hogwartsHouses } from './shared_assets';
+import { channelIDs, getCurrentSeason, hogwartsHouses } from './shared_assets';
 import { hogwartsHouse } from './types/enums';
 
 let msg: Discord.Message | null;
@@ -17,7 +17,7 @@ export async function updateStats() {
       'season',
       [Sequelize.fn('sum', Sequelize.col('amount')), 'points'],
     ],
-    where: { season: currentSeason },
+    where: { season: getCurrentSeason() },
     group: ['house'],
     raw: true,
   })) as any;
@@ -38,7 +38,7 @@ export async function updateStats() {
     msg = await msg.edit({
       embeds: [
         new EmbedBuilder({
-          title: `Current house points (Season ${currentSeason})`,
+          title: `Current house points (Season ${getCurrentSeason()})`,
           fields,
           image: {
             url: 'https://media.discordapp.net/attachments/779119442184765492/781635288551391242/1000.png',

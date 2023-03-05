@@ -11,7 +11,10 @@ export const ERROR_COLOR = 0x0000ff;
 export const INFO_COLOR = 0x0000ff;
 export const SIGN = 'Hausbot - created by T0TProduction#0001 for Hogwarts but better';
 
-export const currentSeason = 2; // TODO automate this :)
+export function getCurrentSeason() {
+  const currentYear = new Date().getFullYear();
+  return currentYear;
+}
 
 let bot_user: ClientUser;
 export function setUser(usr: ClientUser) {
