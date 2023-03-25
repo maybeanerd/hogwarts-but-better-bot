@@ -24,7 +24,7 @@
     "zlib-sync": "0.1.8"
   },
   "devDependencies": {
-    "@types/node": "16.18.20",
+    "@types/node": "16.18.21",
     "@types/umzug": "2.3.3",
     "@typescript-eslint/eslint-plugin": "5.56.0",
     "@typescript-eslint/parser": "5.56.0",
