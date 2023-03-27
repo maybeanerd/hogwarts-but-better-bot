@@ -26,8 +26,8 @@
   "devDependencies": {
     "@types/node": "16.18.21",
     "@types/umzug": "2.3.3",
-    "@typescript-eslint/eslint-plugin": "5.56.0",
-    "@typescript-eslint/parser": "5.56.0",
+    "@typescript-eslint/eslint-plugin": "5.57.0",
+    "@typescript-eslint/parser": "5.57.0",
     "eslint": "8.36.0",
     "eslint-config-airbnb-base": "15.0.0",
     "prettier": "2.8.7",
