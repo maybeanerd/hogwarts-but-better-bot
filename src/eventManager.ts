@@ -6,8 +6,9 @@ import {
 } from 'discord.js';
 import { channelIDs } from './shared_assets';
 
-const eventDayOfWeek = 7;
-const eventWeekOfMonth = 4;
+// Zero based offsets
+const eventDayOfWeek = 6; // sunday
+const eventWeekOfMonth = 3; // 4th week of the month
 
 async function createEventIfNoneExist(bot: Client) {
   const guilds = await bot.guilds.fetch();
@@ -22,6 +23,7 @@ async function createEventIfNoneExist(bot: Client) {
       )) as VoiceBasedChannel | null;
 
       if (voiceChannel) {
+        // TODO figure out this date logic, its most likely wrong
         const today = new Date();
         const dayOfWeek = today.getDay();
         const eventMonth = dayOfWeek > eventDayOfWeek ? today.getMonth() + 1 : today.getMonth();
@@ -34,7 +36,8 @@ async function createEventIfNoneExist(bot: Client) {
           scheduledStartTime: new Date(
             today.getFullYear(),
             eventMonth,
-            7 * (eventWeekOfMonth - 1) + eventDayOfWeek,
+            // TODO fix this since this is definitely wrong
+            7 * eventWeekOfMonth + eventDayOfWeek,
             20,
             0,
             0,
