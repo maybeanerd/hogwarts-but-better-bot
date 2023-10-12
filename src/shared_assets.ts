@@ -38,11 +38,13 @@ export const channelIDs = productionMode
     pointtracker: '785162601007939645',
     errorchannel: '785162879556911144',
     logchannel: '785162879556911144',
+    eventVoiceChannel: '767826543195324482',
   }
   : {
     pointtracker: '781622087801634816',
     errorchannel: '781597906100158504',
     logchannel: '781597906100158504',
+    eventVoiceChannel: '491865711921201156',
   };
 
 export function isAdmin(usr: GuildMember | null) {
