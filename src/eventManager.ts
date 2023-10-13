@@ -6,15 +6,44 @@ import {
 } from 'discord.js';
 import { getChannelsOfGuild } from './shared_assets';
 
-// Zero based offsets
-const eventDayOfWeek = 6; // sunday
-const eventWeekOfMonth = 3; // 4th week of the month
+const startingHour = 20;
+
+function getLastSunday(year: number, month: number) {
+  const date = new Date(year, month, 1, startingHour);
+  const weekday = date.getDay();
+  const dayDiff = weekday === 0 ? 7 : weekday;
+  date.setDate(date.getDate() - dayDiff);
+  return date;
+}
+
+function getSecondLastSunday(year: number, month: number) {
+  const date = getLastSunday(year, month);
+  date.setDate(date.getDate() - 7);
+  return date;
+}
+
+function getNextEventDate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const eventDate = getSecondLastSunday(year, month);
+
+  // If the day is in the future, use it
+  if (now.getTime() < eventDate.getTime()) {
+    return eventDate;
+  }
+  // If the month is the last, wrap around to the next year
+  if (month === 11) {
+    return getSecondLastSunday(year + 1, 0);
+  }
+  // Else, use the next month
+  return getSecondLastSunday(year, month + 1);
+}
 
 async function createEventIfNoneExist(bot: Client) {
   const guilds = await bot.guilds.fetch();
 
   const promises = guilds.map(async (partialGuild) => {
-
     const entireGuild = await partialGuild.fetch();
     const existingScheduledEvents = await entireGuild.scheduledEvents.fetch();
 
@@ -25,25 +54,12 @@ async function createEventIfNoneExist(bot: Client) {
       )) as VoiceBasedChannel | null;
 
       if (voiceChannel) {
-        // TODO figure out this date logic, its most likely wrong
-        const today = new Date();
-        const dayOfWeek = today.getDay();
-        const eventMonth = dayOfWeek > eventDayOfWeek ? today.getMonth() + 1 : today.getMonth();
-
         entireGuild.scheduledEvents.create({
           name: 'Stammtisch',
           entityType: GuildScheduledEventEntityType.Voice,
           channel: voiceChannel,
           privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
-          scheduledStartTime: new Date(
-            today.getFullYear(),
-            eventMonth,
-            // TODO fix this since this is definitely wrong
-            7 * eventWeekOfMonth + eventDayOfWeek,
-            20,
-            0,
-            0,
-          ),
+          scheduledStartTime: getNextEventDate(),
         });
       }
     }
