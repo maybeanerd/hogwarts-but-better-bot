@@ -4,7 +4,7 @@ import {
   GuildScheduledEventPrivacyLevel,
   VoiceBasedChannel,
 } from 'discord.js';
-import { channelIDs } from './shared_assets';
+import { channelIDs, guildShouldBeManaged } from './shared_assets';
 
 // Zero based offsets
 const eventDayOfWeek = 6; // sunday
@@ -14,6 +14,10 @@ async function createEventIfNoneExist(bot: Client) {
   const guilds = await bot.guilds.fetch();
 
   const promises = guilds.map(async (partialGuild) => {
+    if (!guildShouldBeManaged(partialGuild.id)) {
+      return;
+    }
+
     const entireGuild = await partialGuild.fetch();
     const existingScheduledEvents = await entireGuild.scheduledEvents.fetch();
 
@@ -51,6 +55,8 @@ async function createEventIfNoneExist(bot: Client) {
 }
 
 export function handleScheduledEvents(bot: Client) {
+  createEventIfNoneExist(bot);
+
   // Check every 10 minutes to make sure there is an event
   setInterval(
     async () => {

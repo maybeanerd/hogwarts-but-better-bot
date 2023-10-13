@@ -47,6 +47,14 @@ export const channelIDs = productionMode
     eventVoiceChannel: '491865711921201156',
   };
 
+const testServerId = '491865711921201152';
+const hogwartsServerId = '767826543195324476';
+const guildToManage = productionMode ? hogwartsServerId : testServerId;
+
+export function guildShouldBeManaged(guildId: string) {
+  return guildId === guildToManage;
+}
+
 export function isAdmin(usr: GuildMember | null) {
   return (
     usr
