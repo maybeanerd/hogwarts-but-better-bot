@@ -45,6 +45,28 @@ export const channelIDs = productionMode
     logchannel: '781597906100158504',
   };
 
+const testServerId = '491865711921201152';
+const hogwartsServerId = '767826543195324476';
+
+const channelsOfGuilds = new Map<string, {
+    eventVoiceChannel: string;
+  }>([
+    [testServerId, {
+      eventVoiceChannel: '491865711921201156',
+    }],
+    [hogwartsServerId, {
+      eventVoiceChannel: '767826543195324482',
+    }],
+  ]);
+
+export function getChannelsOfGuild(guildId: string) {
+  const channels = channelsOfGuilds.get(guildId);
+  if (!channels) {
+    throw new Error(`No channels defined for guild ${guildId}`);
+  }
+  return channels;
+}
+
 export function isAdmin(usr: GuildMember | null) {
   return (
     usr

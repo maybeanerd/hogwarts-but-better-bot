@@ -19,6 +19,7 @@ import { checkCommand } from './commandHandler';
 // eslint-disable-next-line import/no-cycle
 import { catchErrorOnDiscord } from './sendToMyDiscord';
 import { trackAndCreateMessage } from './housePointTracker';
+import { handleScheduledEvents } from './eventManager';
 /* eslint-enable import/first */
 
 const umzug = new Umzug({
@@ -151,3 +152,5 @@ bot.on('disconnect', () => {
 });
 
 bot.login(TOKEN); // connect to discord
+
+handleScheduledEvents(bot);

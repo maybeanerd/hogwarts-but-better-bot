@@ -26,5 +26,7 @@ services:
       - DB_PORT=${DB_PORT}
       - DB_NAME=${DB_NAME}
       - NODE_ENV=development
+    depends_on:
+      - db
 volumes:
   my-sql:
