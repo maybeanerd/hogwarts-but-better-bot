@@ -38,21 +38,33 @@ export const channelIDs = productionMode
     pointtracker: '785162601007939645',
     errorchannel: '785162879556911144',
     logchannel: '785162879556911144',
-    eventVoiceChannel: '767826543195324482',
   }
   : {
     pointtracker: '781622087801634816',
     errorchannel: '781597906100158504',
     logchannel: '781597906100158504',
-    eventVoiceChannel: '491865711921201156',
   };
 
 const testServerId = '491865711921201152';
 const hogwartsServerId = '767826543195324476';
-const guildToManage = productionMode ? hogwartsServerId : testServerId;
 
-export function guildShouldBeManaged(guildId: string) {
-  return guildId === guildToManage;
+const channelsOfGuilds = new Map<string, {
+    eventVoiceChannel: string;
+  }>([
+    [testServerId, {
+      eventVoiceChannel: '491865711921201156',
+    }],
+    [hogwartsServerId, {
+      eventVoiceChannel: '767826543195324482',
+    }],
+  ]);
+
+export function getChannelsOfGuild(guildId: string) {
+  const channels = channelsOfGuilds.get(guildId);
+  if (!channels) {
+    throw new Error(`No channels defined for guild ${guildId}`);
+  }
+  return channels;
 }
 
 export function isAdmin(usr: GuildMember | null) {

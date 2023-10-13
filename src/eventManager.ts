@@ -4,7 +4,7 @@ import {
   GuildScheduledEventPrivacyLevel,
   VoiceBasedChannel,
 } from 'discord.js';
-import { channelIDs, guildShouldBeManaged } from './shared_assets';
+import { getChannelsOfGuild } from './shared_assets';
 
 // Zero based offsets
 const eventDayOfWeek = 6; // sunday
@@ -14,16 +14,14 @@ async function createEventIfNoneExist(bot: Client) {
   const guilds = await bot.guilds.fetch();
 
   const promises = guilds.map(async (partialGuild) => {
-    if (!guildShouldBeManaged(partialGuild.id)) {
-      return;
-    }
 
     const entireGuild = await partialGuild.fetch();
     const existingScheduledEvents = await entireGuild.scheduledEvents.fetch();
 
     if (existingScheduledEvents.size === 0) {
+      const channelId = getChannelsOfGuild(entireGuild.id).eventVoiceChannel;
       const voiceChannel = (await entireGuild.channels.fetch(
-        channelIDs.eventVoiceChannel,
+        channelId,
       )) as VoiceBasedChannel | null;
 
       if (voiceChannel) {
