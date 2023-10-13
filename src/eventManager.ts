@@ -56,6 +56,9 @@ async function createEventIfNoneExist(bot: Client) {
       if (voiceChannel) {
         entireGuild.scheduledEvents.create({
           name: 'Stammtisch',
+          description: `Der monatliche Stammtisch zum vorletzten Sonntag im Monat.
+            
+Dieses Event wurde automatisch von ${bot.user?.displayName} generiert.`,
           entityType: GuildScheduledEventEntityType.Voice,
           channel: voiceChannel,
           privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
