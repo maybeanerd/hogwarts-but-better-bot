@@ -55,7 +55,7 @@ const channelsOfGuilds = new Map<string, {
       eventVoiceChannel: '491865711921201156',
     }],
     [hogwartsServerId, {
-      eventVoiceChannel: '767826543195324482',
+      eventVoiceChannel: '767839802740965466',
     }],
   ]);
 
