@@ -89,13 +89,14 @@ Dieses Event wurde automatisch von ${authorName} generiert.`,
 export function handleScheduledEvents(bot: Client) {
   const guildManager = bot.guilds;
   const authorName = bot.user?.username ?? 'Hogwarts But Better Bot';
+
   createEventIfNoneExist(guildManager, authorName);
 
-  // Check every 10 minutes to make sure there is an event
+  // Check every 6 hours to make sure there is an event
   setInterval(
     async () => {
       await createEventIfNoneExist(guildManager, authorName);
     },
-    1000 * 60 * 10,
+    1000 * 60 * 60 * 6,
   );
 }
