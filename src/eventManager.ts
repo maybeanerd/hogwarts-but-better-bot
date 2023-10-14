@@ -1,8 +1,10 @@
 import {
   Client,
+  Guild,
+  GuildManager,
+  GuildScheduledEvent,
   GuildScheduledEventEntityType,
   GuildScheduledEventPrivacyLevel,
-  VoiceBasedChannel,
 } from 'discord.js';
 import { getChannelsOfGuild } from './shared_assets';
 
@@ -40,8 +42,21 @@ function getNextEventDate() {
   return getSecondLastSunday(year, month + 1);
 }
 
-async function createEventIfNoneExist(bot: Client) {
-  const guilds = await bot.guilds.fetch();
+async function announceEvent(guild: Guild, event: GuildScheduledEvent) {
+  const eventAnnouncementChannel = await guild.channels.fetch(
+    getChannelsOfGuild(guild.id).eventAnnouncementChannel,
+  );
+  if (eventAnnouncementChannel && eventAnnouncementChannel.isTextBased()) {
+    eventAnnouncementChannel.send(`Der nächste Stammtisch wurde geplant!
+${event.url}`);
+  }
+}
+
+async function createEventIfNoneExist(
+  guildManager: GuildManager,
+  authorName: string,
+) {
+  const guilds = await guildManager.fetch();
 
   const promises = guilds.map(async (partialGuild) => {
     const entireGuild = await partialGuild.fetch();
@@ -49,21 +64,21 @@ async function createEventIfNoneExist(bot: Client) {
 
     if (existingScheduledEvents.size === 0) {
       const channelId = getChannelsOfGuild(entireGuild.id).eventVoiceChannel;
-      const voiceChannel = (await entireGuild.channels.fetch(
-        channelId,
-      )) as VoiceBasedChannel | null;
+      const voiceChannel = await entireGuild.channels.fetch(channelId);
 
-      if (voiceChannel) {
-        entireGuild.scheduledEvents.create({
+      if (voiceChannel && voiceChannel.isVoiceBased()) {
+        const event = await entireGuild.scheduledEvents.create({
           name: 'Stammtisch',
           description: `Der monatliche Stammtisch zum vorletzten Sonntag im Monat.
             
-Dieses Event wurde automatisch von ${bot.user?.displayName} generiert.`,
+Dieses Event wurde automatisch von ${authorName} generiert.`,
           entityType: GuildScheduledEventEntityType.Voice,
           channel: voiceChannel,
           privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
           scheduledStartTime: getNextEventDate(),
         });
+
+        await announceEvent(entireGuild, event);
       }
     }
   });
@@ -72,12 +87,14 @@ Dieses Event wurde automatisch von ${bot.user?.displayName} generiert.`,
 }
 
 export function handleScheduledEvents(bot: Client) {
-  createEventIfNoneExist(bot);
+  const guildManager = bot.guilds;
+  const authorName = bot.user?.username ?? 'Hogwarts But Better Bot';
+  createEventIfNoneExist(guildManager, authorName);
 
   // Check every 10 minutes to make sure there is an event
   setInterval(
     async () => {
-      await createEventIfNoneExist(bot);
+      await createEventIfNoneExist(guildManager, authorName);
     },
     1000 * 60 * 10,
   );
