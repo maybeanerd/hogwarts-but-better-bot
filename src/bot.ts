@@ -132,6 +132,7 @@ bot.on('ready', async () => {
   });
 
   trackAndCreateMessage(bot);
+  handleScheduledEvents(bot);
 });
 
 bot.on('messageCreate', async (msg) => {
@@ -152,5 +153,3 @@ bot.on('disconnect', () => {
 });
 
 bot.login(TOKEN); // connect to discord
-
-handleScheduledEvents(bot);
