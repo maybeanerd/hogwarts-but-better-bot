@@ -11,7 +11,7 @@ import { getChannelsOfGuild } from './shared_assets';
 const startingHour = 20;
 
 function getLastSunday(year: number, month: number) {
-  const date = new Date(year, month, 1, startingHour);
+  const date = new Date(year, month + 1, 1, startingHour);
   const weekday = date.getDay();
   const dayDiff = weekday === 0 ? 7 : weekday;
   date.setDate(date.getDate() - dayDiff);
@@ -67,6 +67,8 @@ async function createEventIfNoneExist(
       const voiceChannel = await entireGuild.channels.fetch(channelId);
 
       if (voiceChannel && voiceChannel.isVoiceBased()) {
+        const startTime = getNextEventDate();
+
         const event = await entireGuild.scheduledEvents.create({
           name: 'Stammtisch',
           description: `Der monatliche Stammtisch zum vorletzten Sonntag im Monat.
@@ -75,7 +77,7 @@ Dieses Event wurde automatisch von ${authorName} generiert.`,
           entityType: GuildScheduledEventEntityType.Voice,
           channel: voiceChannel,
           privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
-          scheduledStartTime: getNextEventDate(),
+          scheduledStartTime: startTime,
         });
 
         await announceEvent(entireGuild, event);
