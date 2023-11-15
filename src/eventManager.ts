@@ -63,7 +63,9 @@ async function createEventIfNoneExist(
   const promises = guilds.map(async (partialGuild) => {
     const entireGuild = await partialGuild.fetch();
     const existingScheduledEvents = await entireGuild.scheduledEvents.fetch();
-    const stammtischEventExists = existingScheduledEvents.some((event) => event.name.toLowerCase().includes(eventName.toLowerCase()));
+    const stammtischEventExists = existingScheduledEvents.some(
+      (event) => event.name.toLowerCase().includes(eventName.toLowerCase()),
+    );
 
     if (!stammtischEventExists) {
       const channelId = getChannelsOfGuild(entireGuild.id).eventVoiceChannel;
