@@ -52,6 +52,8 @@ ${event.url}`);
   }
 }
 
+const eventName = 'Stammtisch';
+
 async function createEventIfNoneExist(
   guildManager: GuildManager,
   authorName: string,
@@ -61,8 +63,9 @@ async function createEventIfNoneExist(
   const promises = guilds.map(async (partialGuild) => {
     const entireGuild = await partialGuild.fetch();
     const existingScheduledEvents = await entireGuild.scheduledEvents.fetch();
+    const stammtischEventExists = existingScheduledEvents.some((event) => event.name.toLowerCase().includes(eventName.toLowerCase()));
 
-    if (existingScheduledEvents.size === 0) {
+    if (!stammtischEventExists) {
       const channelId = getChannelsOfGuild(entireGuild.id).eventVoiceChannel;
       const voiceChannel = await entireGuild.channels.fetch(channelId);
 
@@ -70,7 +73,7 @@ async function createEventIfNoneExist(
         const startTime = getNextEventDate();
 
         const event = await entireGuild.scheduledEvents.create({
-          name: 'Stammtisch',
+          name: eventName,
           description: `Der monatliche Stammtisch zum vorletzten Sonntag im Monat.
             
 Dieses Event wurde automatisch von ${authorName} generiert.`,
