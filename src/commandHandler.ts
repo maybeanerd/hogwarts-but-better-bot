@@ -4,6 +4,7 @@ import { inf as info } from './commands/info';
 import { ping } from './commands/ping';
 // we allow this cycle once, as the help command also needs to list itself
 import { help } from './commands/help'; // eslint-disable-line import/no-cycle
+import { stats } from './commands/stats';
 
 import {
   DELETE_COMMANDS, isAdmin, PREFIX, user,
@@ -19,6 +20,7 @@ export const commands: { [k: string]: BotCommand } = {
   help,
   info,
   ping,
+  stats,
 };
 
 async function catchError(error: Error, msg: Discord.Message, command: string) {
