@@ -21,12 +21,11 @@ export const stats: BotCommand = {
     const seasonOfCommand = Number(content.split(' ')[0]) ?? getCurrentSeason();
 
     if (Number.isNaN(seasonOfCommand)) {
-      return msg.reply(
+      await msg.reply(
         `Invalid season supplied:${seasonOfCommand}`,
       );
+      return;
     }
-
-    console.log('stats command content:', content);
 
     const season = getCurrentSeason();
 
