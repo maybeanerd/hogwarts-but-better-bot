@@ -31,6 +31,15 @@ export const hogwartsHouses = new Map([
   ['ravenclaw', hogwartsHouse.Ravenclaw],
 ]);
 
+export function getReadableHouseFromEnum(house: hogwartsHouse): string | null {
+  const name = Array.from(hogwartsHouses.entries())
+    .find(([, value]) => value === house)?.[0];
+  if (name) {
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
+  return null;
+}
+
 export const productionMode = process.env.NODE_ENV !== 'development';
 
 export const channelIDs = productionMode
