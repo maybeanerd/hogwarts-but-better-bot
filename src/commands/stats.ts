@@ -18,16 +18,16 @@ export const stats: BotCommand = {
       inline: boolean;
     }> = [];
 
-    const seasonOfCommand = Number(content.split(' ')[0]) ?? getCurrentSeason();
+    const seasonOfCommand = (content.split(' ')[0]);
 
-    if (Number.isNaN(seasonOfCommand)) {
+    const season = seasonOfCommand ? Number(seasonOfCommand) : getCurrentSeason();
+
+    if (Number.isNaN(season)) {
       await msg.reply(
         `Invalid season supplied:${seasonOfCommand}`,
       );
       return;
     }
-
-    const season = getCurrentSeason();
 
     const pointsOfSeason = await transferredPoints.findAll({
       where: {
