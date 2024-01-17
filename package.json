@@ -16,7 +16,7 @@
     "libsodium-wrappers": "0.7.13",
     "mysql2": "3.7.0",
     "sequelize": "6.35.2",
-    "umzug": "3.5.0"
+    "umzug": "3.5.1"
   },
   "optionalDependencies": {
     "@discordjs/opus": "0.9.0",
