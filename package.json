@@ -1,6 +1,6 @@
 {
   "name": "Hausbot",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Hogwarts but better bot",
   "main": "dist/bot.js",
   "directories": {
@@ -16,7 +16,7 @@
     "libsodium-wrappers": "0.7.13",
     "mysql2": "3.9.1",
     "sequelize": "6.37.0",
-    "umzug": "3.6.1"
+    "umzug": "3.7.0"
   },
   "optionalDependencies": {
     "@discordjs/opus": "0.9.0",
