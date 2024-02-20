@@ -1,6 +1,6 @@
 {
   "name": "Hausbot",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Hogwarts but better bot",
   "main": "dist/bot.js",
   "directories": {
@@ -12,7 +12,7 @@
     "axios": "1.6.7",
     "discord-api-types": "0.37.70",
     "discord.js": "14.14.1",
-    "dotenv": "16.4.4",
+    "dotenv": "16.4.5",
     "libsodium-wrappers": "0.7.13",
     "mysql2": "3.9.1",
     "sequelize": "6.37.1",
