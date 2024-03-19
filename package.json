@@ -1,6 +1,6 @@
 {
   "name": "Hausbot",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "description": "Hogwarts but better bot",
   "main": "dist/bot.js",
   "directories": {
@@ -24,7 +24,7 @@
     "zlib-sync": "0.1.9"
   },
   "devDependencies": {
-    "@types/node": "20.11.29",
+    "@types/node": "20.11.30",
     "@types/umzug": "2.3.7",
     "@typescript-eslint/eslint-plugin": "7.3.1",
     "@typescript-eslint/parser": "7.3.1",
