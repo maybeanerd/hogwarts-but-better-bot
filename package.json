@@ -1,6 +1,6 @@
 {
   "name": "Hausbot",
-  "version": "0.0.55",
+  "version": "0.0.56",
   "description": "Hogwarts but better bot",
   "main": "dist/bot.js",
   "directories": {
@@ -15,7 +15,7 @@
     "dotenv": "16.4.5",
     "libsodium-wrappers": "0.7.13",
     "mysql2": "3.9.4",
-    "sequelize": "6.37.2",
+    "sequelize": "6.37.3",
     "umzug": "3.8.0"
   },
   "optionalDependencies": {
