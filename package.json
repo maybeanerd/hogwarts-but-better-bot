@@ -1,6 +1,6 @@
 {
   "name": "Hausbot",
-  "version": "0.0.64",
+  "version": "0.0.65",
   "description": "Hogwarts but better bot",
   "main": "dist/bot.js",
   "directories": {
@@ -10,7 +10,7 @@
   "dependencies": {
     "@discordjs/builders": "1.7.0",
     "axios": "1.6.8",
-    "discord-api-types": "0.37.82",
+    "discord-api-types": "0.37.83",
     "discord.js": "14.14.1",
     "dotenv": "16.4.5",
     "libsodium-wrappers": "0.7.13",
