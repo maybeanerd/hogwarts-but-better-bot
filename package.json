@@ -14,7 +14,7 @@
     "discord.js": "14.15.3",
     "dotenv": "16.4.5",
     "libsodium-wrappers": "0.7.15",
-    "mysql2": "3.11.1",
+    "mysql2": "3.11.2",
     "sequelize": "6.37.3",
     "umzug": "3.8.1"
   },
