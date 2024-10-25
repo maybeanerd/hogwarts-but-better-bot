@@ -15,7 +15,7 @@
     "dotenv": "16.4.5",
     "libsodium-wrappers": "0.7.15",
     "mysql2": "3.11.3",
-    "sequelize": "6.37.4",
+    "sequelize": "6.37.5",
     "umzug": "3.8.2"
   },
   "optionalDependencies": {
