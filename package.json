@@ -12,7 +12,7 @@
     "axios": "1.7.8",
     "discord-api-types": "0.37.99",
     "discord.js": "14.15.3",
-    "dotenv": "16.4.5",
+    "dotenv": "16.4.6",
     "libsodium-wrappers": "0.7.15",
     "mysql2": "3.11.5",
     "sequelize": "6.37.5",
