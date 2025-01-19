@@ -67,7 +67,7 @@ async function isBastiTheSenate(msg: Discord.Message) {
   return false;
 }
 
-async function getHouseOfUser(member: Discord.GuildMember) {
+async function getHouseOfUser(member: Discord.GuildMember | null) {
   if (!member) {
     return null;
   }
@@ -121,18 +121,22 @@ export async function handle(msg: Message) {
       const { user, error } = await findMember(msg.guild!, mentionedUser);
 
       if (error) {
-        return msg.reply(`Found no user of that name, bruh.\n${error}`);
-      }
-      if (isAdmin(user)) {
-        return msg.reply(
-          'You could give anyone points. Anyone. And you try this. *disgraceful.*',
-        );
+        return msg.reply(`Found no user of that name, sowwy.\n${error}`);
       }
 
-      const userHouse = await getHouseOfUser(user!);
+      const userHouse = await getHouseOfUser(user);
       if (!userHouse) {
         return msg.reply(`${user!.displayName} doesn't seem to have a house.`);
       }
+
+      const adminHouse = await getHouseOfUser(msg.member);
+      if (!adminHouse) {
+        return msg.reply(`${msg.member?.displayName} seems to not belong to a house. How'd that happen??`);
+      }
+      if (adminHouse === userHouse) {
+        return msg.reply(`${user?.displayName} seems to belong to the same house as ${msg.member?.displayName}, which just won't do.`);
+      }
+
       mentionedHouse = userHouse;
       pointReceiver = user!;
     }
