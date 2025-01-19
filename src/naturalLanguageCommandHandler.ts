@@ -120,6 +120,10 @@ export async function handle(msg: Message) {
     } else {
       const { user, error } = await findMember(msg.guild!, mentionedUser);
 
+      if (msg.member?.id === user?.id) {
+        return msg.reply(`sneaky lil ${msg.member?.displayName}. You can't give yourself points.`);
+      }
+
       if (error) {
         return msg.reply(`Found no user of that name, sowwy.\n${error}`);
       }
