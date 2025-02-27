@@ -46,13 +46,18 @@ const bastisID = '185865492576075776';
 const memeUrl = 'https://cdn.discordapp.com/attachments/779119442184765492/785545402882850826/bastiIsTheSenate.png';
 /** Nach Lukas Wunsch ein kleines easteregg */
 async function isBastiTheSenate(msg: Discord.Message) {
+  const { channel } = msg;
+  if (channel.isDMBased()) {
+    return false;
+  }
+
   const lowercaseMsg = msg.content.toLowerCase();
   if (
     msg.author.id === bastisID
     && lowercaseMsg.includes('senate')
     && lowercaseMsg.includes('the')
   ) {
-    await msg.channel.send({
+    await channel.send({
       content: 'Did you ask for the senate?',
       embeds: [
         {
@@ -79,6 +84,12 @@ async function getHouseOfUser(member: Discord.GuildMember | null) {
 }
 
 export async function handle(msg: Message) {
+  const { channel } = msg;
+  // Don't allow DMs
+  if (channel.isDMBased()) {
+    return null;
+  }
+
   try {
     if (await isBastiTheSenate(msg)) {
       return null;
@@ -161,7 +172,7 @@ export async function handle(msg: Message) {
 
     updateStats();
 
-    await msg.channel.send({
+    await channel.send({
       content: `${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
         hogwartsHouse[mentionedHouse]
       }!`,
