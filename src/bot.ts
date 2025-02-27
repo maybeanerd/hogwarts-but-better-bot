@@ -138,7 +138,7 @@ bot.on('ready', async () => {
 bot.on('messageCreate', async (msg) => {
   console.log('Message received: ', msg.content);
   try {
-    await checkCommand(msg as Discord.Message);
+    await checkCommand(msg);
   } catch (err) {
     console.error(err);
   }

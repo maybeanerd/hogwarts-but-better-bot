@@ -1,5 +1,6 @@
 // commands made by Basti for use of the Bot
 import Discord, { Message } from 'discord.js';
+import { HandledMessage } from './types/command';
 
 export async function findMember(
   guild: Discord.Guild,
@@ -80,7 +81,7 @@ export async function findRole(guild: Discord.Guild, ment: string) {
 // this is an idea to implement rather reusable confirmation processes.
 // ; abortMessage, timeoutMessage and time are optional parameters
 export async function yesOrNo(
-  msg: Discord.Message,
+  msg: HandledMessage,
   question: string,
   abortMessage?: string,
   timeoutMessage?: string,
@@ -89,13 +90,13 @@ export async function yesOrNo(
   return msg.channel.send(question).then(async (mess) => {
     const filter = (reaction: Discord.MessageReaction, user: Discord.User) => (reaction.emoji.name === '☑' || reaction.emoji.name === '❌')
       && user.id === msg.author.id;
-    await (mess as Message).react('☑');
-    await (mess as Message).react('❌');
+    await (mess).react('☑');
+    await (mess).react('❌');
     let time = tim;
     if (!time) {
       time = 20000;
     }
-    return (mess as Message)
+    return (mess)
       .awaitReactions({ filter, max: 1, time })
       .then(async (reacts) => {
         (mess as Message).delete();
