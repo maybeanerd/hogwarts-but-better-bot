@@ -5,7 +5,7 @@ import {
 } from '../shared_assets';
 
 import { accessLevel, hogwartsHouse } from '../types/enums';
-import { BotCommand } from '../types/magibot';
+import { BotCommand } from '../types/command';
 import { transferredPoints } from '../database/allModels';
 
 export const stats: BotCommand = {

@@ -1,6 +1,6 @@
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { accessLevel } from '../types/enums';
-import { BotCommand } from '../types/magibot';
+import { BotCommand } from '../types/command';
 
 export const help: BotCommand = {
   name: 'help',

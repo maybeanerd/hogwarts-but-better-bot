@@ -14,7 +14,7 @@ import { catchErrorOnDiscord } from './sendToMyDiscord';
 import { accessLevel } from './types/enums';
 // eslint-disable-next-line import/no-cycle
 import { handle } from './naturalLanguageCommandHandler';
-import { BotCommand } from './types/magibot';
+import { BotCommand, HandledMessage } from './types/command';
 
 export const commands: { [k: string]: BotCommand } = {
   help,
@@ -37,7 +37,9 @@ If you can reproduce this, consider using \`${PREFIX}.bug <bugreport>\` or join 
 
 const userCooldowns = new Set<string>();
 
-export async function checkCommand(msg: Discord.Message) {
+export async function checkCommand(
+  msg: HandledMessage,
+) {
   if (!(msg.author && msg.guild && msg.guild.members.me)) {
     // check for valid message
     console.error('Invalid message received:', msg);
@@ -82,7 +84,7 @@ export async function checkCommand(msg: Discord.Message) {
   if (command) {
     let commandVal: string;
     const pre = command.charAt(0);
-    const myPerms = (msg.channel as Discord.TextChannel).permissionsFor(
+    const myPerms = (msg.channel).permissionsFor(
       msg.guild.members.me,
     );
     if (pre === '.') {
