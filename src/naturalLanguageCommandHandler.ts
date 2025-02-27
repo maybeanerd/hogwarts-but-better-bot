@@ -1,4 +1,4 @@
-import Discord, { Message } from 'discord.js';
+import Discord from 'discord.js';
 import { findMember } from './bamands';
 // eslint-disable-next-line import/no-cycle
 import { bot } from './bot';
@@ -13,6 +13,7 @@ import {
   isAdmin,
 } from './shared_assets';
 import { hogwartsHouse } from './types/enums';
+import { HandledMessage } from './types/command';
 
 function getPointGifs(house: hogwartsHouse, addition: boolean) {
   if (house === hogwartsHouse.Slytherin) {
@@ -45,19 +46,14 @@ function getPointGifs(house: hogwartsHouse, addition: boolean) {
 const bastisID = '185865492576075776';
 const memeUrl = 'https://cdn.discordapp.com/attachments/779119442184765492/785545402882850826/bastiIsTheSenate.png';
 
-async function isBastiTheSenate(msg: Discord.Message) {
-  const { channel } = msg;
-  if (channel.isDMBased()) {
-    return false;
-  }
-
+async function isBastiTheSenate(msg: HandledMessage) {
   const lowercaseMsg = msg.content.toLowerCase();
   if (
     msg.author.id === bastisID
     && lowercaseMsg.includes('senate')
     && lowercaseMsg.includes('the')
   ) {
-    await channel.send({
+    await msg.channel.send({
       content: 'Did you ask for the senate?',
       embeds: [
         {
@@ -83,13 +79,7 @@ async function getHouseOfUser(member: Discord.GuildMember | null) {
   return hogwartsHouses.get(role.name.toLowerCase()) || null;
 }
 
-export async function handle(msg: Message) {
-  const { channel } = msg;
-  // Don't allow DMs
-  if (channel.isDMBased()) {
-    return null;
-  }
-
+export async function handle(msg: HandledMessage) {
   try {
     if (await isBastiTheSenate(msg)) {
       return null;
@@ -172,7 +162,7 @@ export async function handle(msg: Message) {
 
     updateStats();
 
-    await channel.send({
+    await msg.channel.send({
       content: `${amount} Punkte ${!addition ? 'Abzug von' : 'für'} ${
         hogwartsHouse[mentionedHouse]
       }!`,
