@@ -10,7 +10,7 @@
   "dependencies": {
     "@discordjs/builders": "1.10.1",
     "axios": "1.8.4",
-    "discord-api-types": "0.37.119",
+    "discord-api-types": "0.37.120",
     "discord.js": "14.18.0",
     "dotenv": "16.4.7",
     "libsodium-wrappers": "0.7.15",
